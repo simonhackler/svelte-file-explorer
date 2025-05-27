@@ -1,9 +1,24 @@
 import { defineConfig } from '@playwright/test';
 
-export default defineConfig({
-	webServer: {
-		command: 'npm run build && npm run preview',
-		port: 4173
-	},
-	testDir: 'e2e'
-});
+import { devices, type PlaywrightTestConfig } from '@playwright/test';
+
+const config: PlaywrightTestConfig = {
+    testDir: 'e2e',
+    testMatch: /(.+\.)?(test|spec)\.[jt]s/,
+    use: {
+        baseURL: 'http://localhost:5173'
+    },
+    projects: [
+        {
+            name: 'chromium',
+            use: { ...devices['Desktop Chrome'] },
+        },
+        {
+            name: 'Mobile Chrome',
+            use: { ...devices['Pixel 5'] }
+        },
+    ]
+};
+
+export default config;
+

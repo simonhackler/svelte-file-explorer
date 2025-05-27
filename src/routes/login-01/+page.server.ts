@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
-import { superValidate } from "sveltekit-superforms";
+import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { loginSchema } from '$lib/pages/login/schema';
 
@@ -12,29 +12,36 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
     signup: async ({ request, locals: { supabase } }) => {
-        const formData = await request.formData()
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
+        const form = await superValidate(request, zod(loginSchema));
+        if (!form.valid) {
+            return form;
+        }
 
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { error } = await supabase.auth.signUp({ email: form.data.email, password: form.data.password })
+
         if (error) {
             console.error(error)
-            redirect(303, '/auth/error')
+            return message(form, error.message, {
+                status: 400
+            })
         } else {
-            redirect(303, '/')
+            return message(form, 'Check your email for a login link.')
         }
     },
     login: async ({ request, locals: { supabase } }) => {
-        const formData = await request.formData()
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
+        const form = await superValidate(request, zod(loginSchema));
+        if (!form.valid) {
+            return form;
+        }
 
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { error } = await supabase.auth.signInWithPassword({ email: form.data.email, password: form.data.password })
         if (error) {
             console.error(error)
-            redirect(303, '/auth/error')
+            return message(form, error.message, {
+                status: 400
+            })
         } else {
-            redirect(303, '/private')
+            redirect(303, '/protected')
         }
     },
 }

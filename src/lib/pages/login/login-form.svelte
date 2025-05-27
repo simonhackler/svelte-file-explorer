@@ -15,7 +15,7 @@
 		validators: zodClient(loginSchema)
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, message } = form;
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
@@ -24,7 +24,7 @@
 		<Card.Description>Enter your email below to login to your account</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" use:enhance action="?/signup">
+		<form method="POST" use:enhance action="?/login">
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Form.Field {form} name="email">
@@ -53,6 +53,9 @@
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
+				{#if $message}
+					<p>{$message}Check your email</p>
+				{/if}
 				<Button type="submit" class="w-full">Login</Button>
 				<Button variant="outline" class="w-full">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
