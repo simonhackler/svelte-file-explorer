@@ -16,7 +16,7 @@
 		"test": "npm run test:e2e",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-        "reset-and-gen-types": "supabase db reset && supabase gen types typescript --local > ./src/schema.ts"
+		"reset-and-gen-types": "supabase db reset && supabase gen types typescript --local > ./src/schema.ts"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3",

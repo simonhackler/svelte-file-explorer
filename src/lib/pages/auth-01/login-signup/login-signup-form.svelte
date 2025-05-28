@@ -2,29 +2,38 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { loginSchema, type LoginSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import PasswordInput from '$lib/components/ui/password-input/password-input.svelte';
+	import { page } from '$app/stores';
 
-	let { data }: { data: { form: SuperValidated<Infer<LoginSchema>> } } = $props();
+	let {
+		data,
+		mode = 'login'
+	}: { data: { loginForm: SuperValidated<Infer<LoginSchema>> }; mode: 'login' | 'signup' } = $props();
 
-	const form = superForm(data.form, {
+	const form = superForm(data.loginForm, {
 		validators: zodClient(loginSchema)
 	});
 
 	const { form: formData, enhance, message } = form;
+    const action = $derived(mode === 'login' ? '?/login' : '?/signup');
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
 	<Card.Header>
-		<Card.Title class="text-2xl">Login</Card.Title>
-		<Card.Description>Enter your email below to login to your account</Card.Description>
+		{#if mode === 'login'}
+			<Card.Title class="text-2xl">Login</Card.Title>
+			<Card.Description>Enter your email below to login to your account</Card.Description>
+		{:else}
+			<Card.Title class="text-2xl">Sign-up</Card.Title>
+			<Card.Description>Enter your email below to login create a new account</Card.Description>
+		{/if}
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" use:enhance action="?/login">
+		<form method="POST" use:enhance {action}>
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Form.Field {form} name="email">
@@ -42,19 +51,21 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<div class="flex items-center">
-									<Form.Label>Password</Form.Label>
-									<a href="##" class="ml-auto inline-block text-sm underline">
-										Forgot your password?
-									</a>
+									<Form.Label class="text-sm">Password</Form.Label>
+									{#if mode === 'login'}
+										<a href="/o1/reset-password" class="ml-auto inline-block text-sm underline">
+											Forgot your password?
+										</a>
+									{/if}
 								</div>
-								<Input {...props} bind:value={$formData.password} />
+								<PasswordInput {...props} bind:value={$formData.password} />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
 				{#if $message}
-					<p>{$message}Check your email</p>
+					<p class:success={$page.status == 200} class:error={$page.status >= 400}>{$message}</p>
 				{/if}
 				<Button type="submit" class="w-full">Login</Button>
 				<Button variant="outline" class="w-full">
@@ -68,9 +79,25 @@
 				</Button>
 			</div>
 			<div class="mt-4 text-center text-sm">
-				Don't have an account?
-				<a href="##" class="underline"> Sign up </a>
+				{#if mode === 'login'}
+					Don't have an account?
+					<a href="/01/signup" class="underline"> Sign up </a>
+				{:else}
+					Already have an account?
+					<a href="/01/login" class="underline"> Login </a>
+				{/if}
 			</div>
 		</form>
 	</Card.Content>
 </Card.Root>
+
+<style>
+    @import '/src/app.css';
+
+	.success {
+		color: green;
+	}
+	.error {
+		@apply text-red-600;
+	}
+</style>
