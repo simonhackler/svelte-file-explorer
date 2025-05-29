@@ -3,15 +3,14 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { resetPasswordSchema, type LoginSchema as ResetPasswordSchema } from './schema';
+	import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 
 	let {
-		data,
-		mode = 'login'
-	}: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> }; mode: 'login' | 'signup' } =
+		data
+	}: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> }} =
 		$props();
 
 	const form = superForm(data.loginForm, {
@@ -19,7 +18,6 @@
 	});
 
 	const { form: formData, enhance, message } = form;
-	const action = $derived(mode === 'login' ? '?/login' : '?/signup');
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
@@ -30,7 +28,7 @@
 		>
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" use:enhance {action}>
+		<form method="POST" use:enhance action="?/resetPassword">
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Form.Field {form} name="email">
@@ -46,18 +44,15 @@
 				{#if $message}
 					<p class:success={$page.status == 200} class:error={$page.status >= 400}>{$message}</p>
 				{/if}
-				<Button type="submit" class="w-full">Login</Button>
+				<Button type="submit" class="w-full">Reset password</Button>
 			</div>
 		</form>
 	</Card.Content>
 </Card.Root>
 
 <style>
-	@import '../../../app.css';
+    @import '/src/app.css';
 
-	.success {
-		color: green;
-	}
 	.error {
 		@apply text-red-600;
 	}

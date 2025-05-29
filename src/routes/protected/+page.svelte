@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let { data } = $props();
@@ -9,6 +10,7 @@
 		if (error) {
 			console.error(error);
 		}
+        goto('/');
 	};
 </script>
 

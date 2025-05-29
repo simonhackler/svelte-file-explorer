@@ -1,53 +1,80 @@
 import { expect, test } from '@playwright/test';
 import { supabase_full_access } from './supabase';
 import { generateRandomUserMail } from './helper';
+import type { Page } from '@playwright/test';
 
-test('login', async ({ page }) => {
-    const email = generateRandomUserMail();
-
+async function createUser(email: string, password: string = 'password') {
     const { data, error } = await supabase_full_access.auth.admin.createUser({
         email,
-        password: 'password',
+        password,
         email_confirm: true,
-    })
+    });
     if (error) {
         throw new Error(error.message);
     }
+    return data;
+}
 
-    await page.goto('/01/login');
+async function fillLoginForm(page: Page, email: string, password: string) {
     await page.getByRole('textbox', { name: 'Email' }).fill(email);
-    await page.getByRole('textbox', { name: 'Password' }).fill('password');
+    await page.getByRole('textbox', { name: 'Password' }).fill(password);
+}
+
+async function getEmailLinkFromSupabaseAdmin(page: Page, linkText: string) {
+    await page.goto('http://127.0.0.1:54324/');
+    await page.getByText('Admin').nth(0).click();
+    const url = await page.locator('#preview-html').contentFrame().getByRole('link', { name: linkText }).getAttribute('href');
+    return url!;
+}
+
+async function performLogin(page: Page, email: string, password: string) {
+    await page.goto('/01/login');
+    await fillLoginForm(page, email, password);
     await page.getByRole('button', { name: 'Login', exact: true }).click();
     await page.waitForURL('/protected');
+}
+
+async function setupUserWithEmail() {
+    const email = generateRandomUserMail();
+    await createUser(email);
+    return email;
+}
+
+test('login', async ({ page }) => {
+    const email = await setupUserWithEmail();
+    await performLogin(page, email, 'password');
 });
 
 test('signup', async ({ page }) => {
     await page.goto('/01/signup');
 
     const email = generateRandomUserMail();
-    await page.getByRole('textbox', { name: 'Email' }).fill(email);
-    await page.getByRole('textbox', { name: 'Password' }).fill('password');
+    await fillLoginForm(page, email, 'password');
     await page.getByRole('button', { name: 'Login', exact: true }).click();
-    await page.goto('http://127.0.0.1:54324/');
-    await page.getByText('Admin').nth(0).click();
-    const url = await page.locator('#preview-html').contentFrame().getByRole('link', { name: 'Confirm your email' }).getAttribute('href');
-    await page.goto(url);
+    
+    const url = await getEmailLinkFromSupabaseAdmin(page, 'Confirm your email');
+    await page.goto(url, { waitUntil: 'networkidle' });
 
-    await expect(page.url()).toContain('protected');
+    expect(page.url()).toContain('protected');
 });
 
 test('reset password', async ({ page }) => {
-    const email = generateRandomUserMail();
-    const { data, error } = await supabase_full_access.auth.admin.createUser({
-        email,
-        password: 'password',
-        email_confirm: true,
-    })
-    if (error) {
-        throw new Error(error.message);
-    }
+    const email = await setupUserWithEmail();
+    
     await page.goto('/01/login');
     await page.getByRole('link', { name: 'Forgot your password?' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).fill(email);
+    await page.getByRole('button', { name: 'Reset password' }).click();
+    
+    const url = await getEmailLinkFromSupabaseAdmin(page, 'Reset Password');
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.getByRole('textbox', { name: 'Password' }).fill('password_new');
+    await page.getByRole('button', { name: 'update password' }).click();
+    await page.getByRole('link', { name: 'Home' }).click();
+    await page.getByRole('button', { name: 'Logout' }).click();
+    await page.waitForURL('/');
+    
+    await performLogin(page, email, 'password_new');
 });
 
 test('is protected', async ({ page }) => {

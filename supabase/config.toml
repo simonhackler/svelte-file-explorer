@@ -177,6 +177,10 @@ content_path = "./supabase/templates/invite.html"
 subject = "Confirm sign up"
 content_path = "./supabase/templates/confirm-signup.html"
 
+[auth.email.template.recovery]
+subject = "Reset password"
+content_path = "./supabase/templates/reset-password.html"
+
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false

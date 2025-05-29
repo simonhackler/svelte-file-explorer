@@ -1,10 +1,16 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-    import ResetPasswordForm from '$lib/pages/auth-01/reset-password/reset-password-form.svelte';
+	import type { PageProps } from './$types';
+	import ResetPasswordForm from '$lib/pages/auth-01/reset-password/reset-password-form.svelte';
+	('$lib/pages/auth-01/reset-password/reset-password-form.svelte');
+	import ResetPasswordConfirmed from '$lib/pages/auth-01/reset-password/reset-password-confirmed.svelte';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: PageProps = $props();
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
-	<ResetPasswordForm {data} mode="login"/>
+	{#if form && form.success}
+		<ResetPasswordConfirmed />
+	{:else}
+		<ResetPasswordForm {data} />
+	{/if}
 </div>

@@ -53,7 +53,7 @@
 								<div class="flex items-center">
 									<Form.Label class="text-sm">Password</Form.Label>
 									{#if mode === 'login'}
-										<a href="/o1/reset-password" class="ml-auto inline-block text-sm underline">
+										<a href="/01/reset-password" class="ml-auto inline-block text-sm underline">
 											Forgot your password?
 										</a>
 									{/if}
