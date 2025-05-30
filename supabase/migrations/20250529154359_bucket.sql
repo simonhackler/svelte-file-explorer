@@ -14,7 +14,7 @@ on storage.objects
 for insert
 to authenticated
 with check (
-  bucket_id = 'my_bucket_id' and
+  bucket_id = 'folders' and
   (storage.foldername(name))[1] = (select auth.uid()::text)
 );
 

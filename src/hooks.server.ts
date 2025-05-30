@@ -3,6 +3,7 @@ import { type Handle, redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
+import { Database } from './schema'
 
 const supabase: Handle = async ({ event, resolve }) => {
     /**
@@ -10,7 +11,7 @@ const supabase: Handle = async ({ event, resolve }) => {
      *
      * The Supabase client gets the Auth token from the request cookies.
      */
-    event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    event.locals.supabase = createServerClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
         cookies: {
             getAll: () => event.cookies.getAll(),
             /**
