@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as TreeView from '$lib/components/ui/tree-view';
-	import { isFolder, type ExplorerNode } from './types';
+	import { isFolder, type ExplorerNode } from './types.svelte';
     import FileItem from './file-item.svelte';
 
     interface Props {

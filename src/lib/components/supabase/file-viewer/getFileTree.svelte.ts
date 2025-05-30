@@ -1,9 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ExplorerNode, FileLeaf, Folder } from "./types";
-import type { Database } from "../../../../schema";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../../../schema';
+import { FileLeaf, Folder, type ExplorerNode, type FileData } from './types.svelte';
 
-interface inputPaths {
+interface InputPath {
     pathTokens: string[];
+    fileData: FileData;
 }
 
 interface BuildFolder {
@@ -11,108 +12,91 @@ interface BuildFolder {
     children: Map<string, BuildNode>;
 }
 
-type BuildNode = BuildFolder | FileLeaf;
 
-function buildTree(filePathList: inputPaths[]) {
-    const root: BuildFolder = { name: 'home', children: new Map<string, BuildFolder>() };
-    for (const { pathTokens } of filePathList) {
-        subBuild(root, pathTokens);
+type BuildNode = BuildFolder | { name: string, fileData: FileData };
+
+function buildTree(filePathList: InputPath[],) {
+    const root: BuildFolder = { name: 'home', children: new Map<string, BuildNode>() };
+    for (const { pathTokens, fileData } of filePathList) {
+        subBuild(root, pathTokens, fileData);
     }
     return root;
 }
 
-function subBuild(root: BuildFolder, pathTokens: string[]) {
-    let current = root;
+function subBuild(current: BuildFolder, pathTokens: string[], fileData: FileData) {
     for (let i = 1; i < pathTokens.length; i++) {
-        let newRoot = current.children.get(pathTokens[i]);
-        if (!newRoot) {
-            if (i == pathTokens.length - 1) {
-                current.children.set(pathTokens[i], { name: pathTokens[i] } as FileLeaf);
-                return;
+        const token = pathTokens[i];
+        let next = current.children.get(token);
+
+        if (!next) {
+            if (i === pathTokens.length - 1) {
+                next = { name: token, fileData };
+            } else {
+                next = { name: token, children: new Map<string, BuildNode>() };
             }
-            newRoot = { name: pathTokens[i], children: new Map<string, BuildFolder>() };
-            current.children.set(pathTokens[i], newRoot);
+            current.children.set(token, next);
         }
-        current = newRoot as BuildFolder;
+
+        if ('children' in next) current = next;
     }
 }
 
 function convertToArray(buildNode: BuildNode, parent: Folder | null): ExplorerNode {
-    if (!buildNode.hasOwnProperty('children')) {
-        return { name: buildNode.name, parent};
+    if (!('children' in buildNode)) {
+        return new FileLeaf(buildNode.name, parent, buildNode.fileData);
     }
-    let node: Folder = { name: buildNode.name, children: [], parent: parent };
+    const node = new Folder(buildNode.name, parent);
     for (const child of buildNode.children.values()) {
-        if (child.hasOwnProperty('children')) {
-            node.children.push(convertToArray(child as BuildFolder, node));
-        } else {
-            node.children.push(child);
-        }
+        node.children.push(convertToArray(child, node));
     }
     return node;
 }
+
 function prettyPrintTreeArray(node: ExplorerNode, prefix = ''): void {
-    if (!node.hasOwnProperty('children')) {
-        return;
-    }
-    if (node.name !== 'root') {
-        // console.log(prefix + node.name);
-    }
+    if (!(node instanceof Folder)) return;
 
-    const kids = node.children as ExplorerNode[];
-    // Optional: alphabetical order.  Remove `.sort()` to retain insertion order.
+    const kids = [...node.children];
     kids.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Prepare the “branches” ── draw ├── for all but the last child, and └── for the last one
-    kids.forEach((child, index) => {
-        const isLast = index === kids.length - 1;
-        const branch = isLast ? '└── ' : '├── ';
-        const newPrefix = prefix + (node.name === 'root' ? '' : isLast ? '    ' : '│   ');
-
-        // Print the branch and recursively print the subtree
+    kids.forEach((child, idx) => {
+        const last = idx === kids.length - 1;
+        const branch = last ? '└── ' : '├── ';
+        const newPrefix = prefix + (last ? '    ' : '│   ');
         console.log(newPrefix + branch + child.name);
-        prettyPrintTree(child, newPrefix);
+        prettyPrintTreeArray(child, newPrefix);
     });
 }
 
-
-function prettyPrintTree(node: BuildNode, prefix = ''): void {
-    if (!node.hasOwnProperty('children')) {
-        return;
-    }
-    if (node.name !== 'root') {
-        // console.log(prefix + node.name);
-    }
-    const kids = Array.from((node as BuildFolder).children.values());
-
-    kids.sort((a, b) => a.name.localeCompare(b.name));
-
-    kids.forEach((child, index) => {
-        const isLast = index === kids.length - 1;
-        const branch = isLast ? '└── ' : '├── ';
-        const newPrefix = prefix + (node.name === 'root' ? '' : isLast ? '    ' : '│   ');
-
-        console.log(newPrefix + branch + child.name);
-        prettyPrintTree(child, newPrefix);
-    });
-}
-
-export async function getAllFilesAndConvertToTree(supabase: SupabaseClient<Database>) {
+export async function getAllFilesAndConvertToTree(
+    supabase: SupabaseClient<Database>
+) {
     const { data, error } = await supabase
         .schema('storage')
         .from('objects')
-        .select('path_tokens')
+        .select(`pathTokens: path_tokens,
+            size: metadata->>size,
+            mimetype: metadata->>mimetype,
+            updatedAt: metadata->>updated_at
+            `)
         .eq('bucket_id', 'folders');
+
     if (error) {
         console.error(error);
         return { data: null, error };
     }
-    const treeMap = buildTree(
-        data!
-            .filter((x) => x != null)
-            .map((x) => {
-                return { pathTokens: x.path_tokens as string[] };
-            })
-    );
-    return { data: convertToArray(treeMap, null), error: null };
+
+    const filePathList = data!
+        .filter(Boolean)
+        .map((row) => ({
+            pathTokens: row.pathTokens as string[],
+            fileData: {
+                size: Number.parseInt(row.size),
+                mimetype: row.mimetype,
+                updatedAt: new Date(row.updatedAt)
+            }
+        }));
+    const buildRoot = buildTree(filePathList);
+
+    return { data: convertToArray(buildRoot, null), error: null };
 }
+

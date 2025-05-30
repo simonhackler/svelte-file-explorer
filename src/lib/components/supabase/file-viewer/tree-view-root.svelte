@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as TreeView from '$lib/components/ui/tree-view';
 	import FileItem from "./file-item.svelte";
-	import { type ExplorerNode } from './types';
+	import { type ExplorerNode } from './types.svelte';
 
     interface Props {
         node: ExplorerNode

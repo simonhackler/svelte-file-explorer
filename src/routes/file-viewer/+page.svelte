@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import type { FocusEventHandler } from 'svelte/elements';
-	import { FolderIcon, FileIcon } from '@lucide/svelte';
+	import { FolderIcon, FileIcon, Plus } from '@lucide/svelte';
 	import {
 		displaySize,
 		FileDropZone,
@@ -20,11 +20,10 @@
 	import {
 		type FileLeaf,
 		type ExplorerNode,
-		type Folder,
+		Folder,
 		isFolder
-	} from '$lib/components/supabase/file-viewer/types';
-	//import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
-	import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/types-new.svelte';
+	} from '$lib/components/supabase/file-viewer/types.svelte';
+	import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
 
 	import TreeViewRoot from '$lib/components/supabase/file-viewer/tree-view-root.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
@@ -37,11 +36,22 @@
 	const user = $derived(data.user as User);
 	let showCreateFolder = $state(false);
 	let createFolderInput: HTMLInputElement | null = $state(null);
-	let tree = $state<Folder>({ name: 'home', children: [], parent: null });
+	let tree = $state<Folder>(new Folder('home', null, []));
 	let currentFolder = $state<Folder>(tree);
 
 	function setCurrentFolder(folder: Folder) {
 		currentFolder = folder;
+	}
+
+	function getFullPath(node: ExplorerNode): string[] {
+		let path = [node.name];
+		let parent = node.parent;
+		while (parent !== null) {
+			path.push(parent.name);
+			parent = parent.parent;
+		}
+		console.log(path);
+		return path;
 	}
 
 	const onUpload: FileDropZoneProps['onUpload'] = async (files) => {
@@ -53,7 +63,8 @@
 	};
 	const uploadFile = async (file: File) => {
 		if (files.find((f) => f.name === file.name)) return;
-		const urlPromise = uploadToSupabase(file);
+		const path = getFullPath(currentFolder).reverse().slice(1).join('/');
+		const urlPromise = uploadToSupabase(file, path);
 		files.push({
 			name: file.name,
 			type: file.type,
@@ -97,23 +108,17 @@
 		}
 	});
 
-	async function downloadFile(path: string, file: FileObject) {
-		const { data, error } = await supabase.storage.from('folders').download(`${path}/${file.name}`);
+	async function downloadFile(path: string) {
+		const { data, error } = await supabase.storage.from('folders').download(`${path}`);
 		if (error) {
 			console.error(error);
-			return null;
+			return '';
 		}
-		return {
-			url: URL.createObjectURL(data),
-			name: file.name,
-			size: data.size,
-			type: data.type,
-			uploadedAt: Date.now()
-		};
+		return URL.createObjectURL(data);
 	}
 
-	async function uploadToSupabase(file: File) {
-		const filepath = `${user.id}/folder1/${file.name}`;
+	async function uploadToSupabase(file: File, fullFolderPath: string) {
+		const filepath = `${user.id}/${fullFolderPath}/${file.name}`;
 		const { data, error } = await supabase.storage.from('folders').upload(filepath, file);
 		if (error) {
 			console.error(error);
@@ -130,14 +135,26 @@
 	function createFolder(inputEvent: Event) {
 		showCreateFolder = false;
 		const newFolderName = createFolderInput!.value;
-		currentFolder.children.push({
-			name: newFolderName,
-			children: [],
-			parent: currentFolder
-		});
-		console.log(tree.children.length);
-		console.log(currentFolder.children.length);
+		if (newFolderName === '') {
+			return;
+		}
+		currentFolder.children.push(new Folder(newFolderName, currentFolder, []));
 	}
+
+	$effect(() => {
+		for (let child of currentFolder.children) {
+			if (
+				!isFolder(child) &&
+				child?.fileData &&
+				child.fileData.mimetype.startsWith('image/') &&
+				child.fileData.url == undefined
+			) {
+				child.fileData.url = downloadFile(
+					user.id + '/' + getFullPath(child).reverse().slice(1).join('/')
+				);
+			}
+		}
+	});
 
 	$effect(() => {
 		if (showCreateFolder) {
@@ -201,7 +218,7 @@
 	<TreeViewRoot node={tree} />
 </div> -->
 
-<div class="flex justify-between">
+<div class="flex justify-between bg-gray-100 p-4 mb-4 border border-gray-300 mx-4 rounded items-center">
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
 			<BreadcrumbRecursive
@@ -211,21 +228,32 @@
 			/>
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
-	<div>
-		<Button>Upload</Button>
-		<Button onclick={() => (showCreateFolder = true)}>Create folder</Button>
+	<div class="flex gap-2">
+		<Button variant="outline">Upload</Button>
+		<Button onclick={() => (showCreateFolder = true)} variant="outline"><Plus class="mr-2" />Create folder</Button>
 	</div>
 </div>
-<div class="grid grid-cols-5">
+<div class="grid grid-cols-8">
 	{#each currentFolder.children as child}
-		<Button class="h-full w-full" ondblclick={() => doubleClickedItem(child)} variant="ghost">
-			<div class="flex h-full w-full flex-col items-center justify-center gap-4">
+		<Button class="w-full h-full" ondblclick={() => doubleClickedItem(child)} variant="ghost">
+			<div class="flex h-full w-full flex-col items-center justify-center gap-4 aspect-square">
 				{#if isFolder(child)}
 					<FolderIcon class="size-8" />
+				{:else if child?.fileData?.url != undefined}
+					{#await child.fileData.url}
+						<FileIcon class="size-8" />
+					{:then url}
+						<img src={url} class="object-cover w-1/2" />
+					{/await}
 				{:else}
 					<FileIcon class="size-8" />
 				{/if}
 				<p>{child.name}</p>
+				{#if isFolder(child)}
+					<p class="text-muted-foreground text-xs">{child.children.length} items</p>
+				{:else}
+					<p class="text-muted-foreground text-xs">{displaySize(child?.fileData.size)}</p>
+				{/if}
 			</div>
 		</Button>
 	{/each}

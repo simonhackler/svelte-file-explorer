@@ -1,53 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database }         from '../../../../schema';
 
-// explorer.ts
-// ──────────────────────────────────────────────────────────────────────────
-// Base class that carries the common state
-export abstract class ExplorerNodeBase {
-  /** display name */
-  name   = $state<string>('');                // ← reactive
-  /** owning folder or null for a root node */
-  parent = $state<Folder | null>(null);       // ← reactive
-
-  constructor(name: string, parent: Folder | null = null) {
-    // initialise the $state properties
-    this.name   = name;
-    this.parent = parent;
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────────────
-// Leaf node (a file)
-export class FileLeaf extends ExplorerNodeBase {
-  constructor(name: string, parent: Folder | null = null) {
-    super(name, parent);
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────────────
-// Folder node – can contain children
-export class Folder extends ExplorerNodeBase {
-  /** child nodes (files OR folders) */
-  children = $state<ExplorerNode[]>([]);      // ← reactive array
-
-  // a handy derived helper: `true` when the folder has no children
-  isEmpty = $derived(this.children.length === 0);
-
-  constructor(
-    name: string,
-    parent: Folder | null = null,
-    children: ExplorerNode[] = []
-  ) {
-    super(name, parent);
-    this.children = children;                 // keep this reactive too
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────────────
-// Type alias for convenience
-export type ExplorerNode = Folder | FileLeaf;
-
 interface InputPath {
   pathTokens: string[];
 }
