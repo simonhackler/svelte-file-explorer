@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import type { FocusEventHandler } from 'svelte/elements';
-	import { FolderIcon, FileIcon, Plus } from '@lucide/svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { FolderIcon, FileIcon, Plus, Ellipsis, Trash2, Folders, FolderOutput } from '@lucide/svelte';
 	import {
 		displaySize,
 		FileDropZone,
@@ -15,20 +15,17 @@
 	import { SvelteDate } from 'svelte/reactivity';
 	import type { PageData } from './$types';
 	import type { User } from '@supabase/supabase-js';
-	import type { FileObject } from '@supabase/storage-js';
-	import * as TreeView from '$lib/components/ui/tree-view';
 	import {
-		type FileLeaf,
 		type ExplorerNode,
 		Folder,
 		isFolder
 	} from '$lib/components/supabase/file-viewer/types.svelte';
 	import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
 
-	import TreeViewRoot from '$lib/components/supabase/file-viewer/tree-view-root.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import BreadcrumbRecursive from '$lib/components/supabase/file-viewer/breadcrumb-recursive.svelte';
 	import { Input } from '$lib/components/ui/input';
+	import FileBrowser from '$lib/components/supabase/file-browser/file-browser.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -39,19 +36,14 @@
 	let tree = $state<Folder>(new Folder('home', null, []));
 	let currentFolder = $state<Folder>(tree);
 
-	function setCurrentFolder(folder: Folder) {
-		currentFolder = folder;
-	}
-
-	function getFullPath(node: ExplorerNode): string[] {
+	function getPath(node: ExplorerNode): string[] {
 		let path = [node.name];
 		let parent = node.parent;
 		while (parent !== null) {
 			path.push(parent.name);
 			parent = parent.parent;
 		}
-		console.log(path);
-		return path;
+		return path.reverse();
 	}
 
 	const onUpload: FileDropZoneProps['onUpload'] = async (files) => {
@@ -63,7 +55,7 @@
 	};
 	const uploadFile = async (file: File) => {
 		if (files.find((f) => f.name === file.name)) return;
-		const path = getFullPath(currentFolder).reverse().slice(1).join('/');
+		const path = getPath(currentFolder).slice(1).join('/');
 		const urlPromise = uploadToSupabase(file, path);
 		files.push({
 			name: file.name,
@@ -126,11 +118,10 @@
 		return URL.createObjectURL(file);
 	}
 
-	function doubleClickedItem(item: ExplorerNode) {
-		if (isFolder(item)) {
-			setCurrentFolder(item);
-		}
-	}
+    async function deleteFiles(paths: string[]) {
+		const { data, error } = await supabase.storage.from('folders').remove(paths);
+        return error;
+    }
 
 	function createFolder(inputEvent: Event) {
 		showCreateFolder = false;
@@ -141,6 +132,32 @@
 		currentFolder.children.push(new Folder(newFolderName, currentFolder, []));
 	}
 
+    function getAllFiles(node: ExplorerNode, currentPath: string): string[] {
+        if (isFolder(node)) {
+            const paths = [];
+            for (let child of node.children) {
+                const childPaths = getAllFiles(child, currentPath + '/' + child.name);
+                paths.push(...childPaths);
+            }
+            return paths;
+        } else {
+            return [currentPath];
+        }
+    }
+
+    async function deleteNode(node: ExplorerNode) {
+        const path = getPath(node).slice(1).join('/');
+        const fullPath = `${user.id}/${path}`
+        const toDelete = getAllFiles(node, fullPath);
+        const { data, error } = await supabase.storage.from('folders').remove(toDelete);
+        if (error) {
+            console.error(error);
+        } else {
+            console.log(data);
+            currentFolder.children = currentFolder.children.filter((f) => f.name !== node.name);
+        }
+    }
+
 	$effect(() => {
 		for (let child of currentFolder.children) {
 			if (
@@ -150,7 +167,7 @@
 				child.fileData.url == undefined
 			) {
 				child.fileData.url = downloadFile(
-					user.id + '/' + getFullPath(child).reverse().slice(1).join('/')
+					user.id + '/' + getPath(child).slice(1).join('/')
 				);
 			}
 		}
@@ -218,7 +235,9 @@
 	<TreeViewRoot node={tree} />
 </div> -->
 
-<div class="flex justify-between bg-gray-100 p-4 mb-4 border border-gray-300 mx-4 rounded items-center">
+<!-- <div
+	class="mx-4 mb-4 flex items-center justify-between rounded border border-gray-300 bg-gray-100 p-4"
+>
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
 			<BreadcrumbRecursive
@@ -226,34 +245,56 @@
 				isLast={true}
 				onBreadCrumbClick={(folder) => setCurrentFolder(folder)}
 			/>
+			<Breadcrumb.Separator />
+			<Breadcrumb.Item>
+				<Button onclick={() => (showCreateFolder = true)} variant="outline"
+					><Plus class="mr-2" />folder</Button
+				>
+			</Breadcrumb.Item>
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 	<div class="flex gap-2">
 		<Button variant="outline">Upload</Button>
-		<Button onclick={() => (showCreateFolder = true)} variant="outline"><Plus class="mr-2" />Create folder</Button>
+		<Button onclick={() => (showCreateFolder = true)} variant="outline"
+			><Plus class="mr-2" />Create folder</Button
+		>
 	</div>
 </div>
-<div class="grid grid-cols-8">
-	{#each currentFolder.children as child}
-		<Button class="w-full h-full" ondblclick={() => doubleClickedItem(child)} variant="ghost">
-			<div class="flex h-full w-full flex-col items-center justify-center gap-4 aspect-square">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
+	{#each currentFolder.children as child (child.name)}
+		<Button class="h-full w-full" ondblclick={() => doubleClickedItem(child)} variant="ghost" data-testid={child.name}>
+			<div class="flex w-full h-full flex-col items-center justify-center gap-4">
 				{#if isFolder(child)}
 					<FolderIcon class="size-8" />
 				{:else if child?.fileData?.url != undefined}
 					{#await child.fileData.url}
 						<FileIcon class="size-8" />
 					{:then url}
-						<img src={url} class="object-cover w-1/2" />
+						<img src={url} class="size-40 object-contain" alt={`preview for ${child.name}`} />
 					{/await}
 				{:else}
 					<FileIcon class="size-8" />
 				{/if}
 				<p>{child.name}</p>
-				{#if isFolder(child)}
-					<p class="text-muted-foreground text-xs">{child.children.length} items</p>
-				{:else}
-					<p class="text-muted-foreground text-xs">{displaySize(child?.fileData.size)}</p>
-				{/if}
+				<div class="flex w-full items-center justify-between">
+					{#if isFolder(child)}
+						<p class="text-muted-foreground text-xs">{child.children.length} items</p>
+					{:else}
+						<p class="text-muted-foreground text-xs">{displaySize(child?.fileData.size)}</p>
+					{/if}
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<Ellipsis />
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Group>
+								<DropdownMenu.Item onclick={() => deleteNode(child)}><Trash2/> <span>Delete</span></DropdownMenu.Item>
+								<DropdownMenu.Item><Folders/><span>Copy</span></DropdownMenu.Item>
+								<DropdownMenu.Item><FolderOutput/>Move</DropdownMenu.Item>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				</div>
 			</div>
 		</Button>
 	{/each}
@@ -265,4 +306,6 @@
 			</div>
 		</Button>
 	{/if}
-</div>
+</div> -->
+
+<FileBrowser bind:currentFolder homeFolderPath={user.id + '/'} onDelete={deleteFiles}/>

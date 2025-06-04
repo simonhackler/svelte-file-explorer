@@ -14,3 +14,14 @@ export const supabase_full_access = createClient<Database>(
 	SUPABASE_SERVICE_ROLE_KEY
 );
 
+export async function createUser(email: string, password: string = 'password') {
+    const { data, error } = await supabase_full_access.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+    });
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data.user;
+}
