@@ -11,81 +11,85 @@ async function uploadFileToSupabase(bucketName: string, filePath: string, fileCo
     return data;
 }
 
-test('test delete folder and files', async ({ page }) => {
-    const user = await loginAndCreateUser(page);
-    
+async function createFolderStructure(userId: string) {
     const testFiles = [
-        `${user.id}/README.md`,
-        `${user.id}/package.json`,
-        `${user.id}/.gitignore`,
+        `${userId}/README.md`,
+        `${userId}/package.json`,
+        `${userId}/.gitignore`,
         
-        `${user.id}/src/index.ts`,
-        `${user.id}/src/types/user.types.ts`,
-        `${user.id}/src/types/api.types.ts`,
-        `${user.id}/src/components/Header.svelte`,
-        `${user.id}/src/components/forms/LoginForm.svelte`,
-        `${user.id}/src/components/forms/SignupForm.svelte`,
-        `${user.id}/src/utils/helpers.ts`,
-        `${user.id}/src/utils/validators/email.validator.ts`,
-        `${user.id}/src/utils/validators/password.validator.ts`,
+        `${userId}/src/index.ts`,
+        `${userId}/src/types/user.types.ts`,
+        `${userId}/src/types/api.types.ts`,
+        `${userId}/src/components/Header.svelte`,
+        `${userId}/src/components/forms/LoginForm.svelte`,
+        `${userId}/src/components/forms/SignupForm.svelte`,
+        `${userId}/src/utils/helpers.ts`,
+        `${userId}/src/utils/validators/email.validator.ts`,
+        `${userId}/src/utils/validators/password.validator.ts`,
         
-        `${user.id}/assets/images/logo.png`,
-        `${user.id}/assets/images/icons/user-icon.svg`,
-        `${user.id}/assets/images/backgrounds/hero-bg.jpg`,
-        `${user.id}/assets/styles/main.css`,
-        `${user.id}/assets/fonts/Inter-Regular.woff2`,
+        `${userId}/assets/images/logo.png`,
+        `${userId}/assets/images/icons/user-icon.svg`,
+        `${userId}/assets/images/backgrounds/hero-bg.jpg`,
+        `${userId}/assets/styles/main.css`,
+        `${userId}/assets/fonts/Inter-Regular.woff2`,
         
-        `${user.id}/docs/installation.md`,
-        `${user.id}/docs/api/authentication.md`,
-        `${user.id}/docs/api/endpoints/users.md`,
-        `${user.id}/docs/api/endpoints/files.md`,
-        `${user.id}/docs/guides/getting-started.md`,
+        `${userId}/docs/installation.md`,
+        `${userId}/docs/api/authentication.md`,
+        `${userId}/docs/api/endpoints/users.md`,
+        `${userId}/docs/api/endpoints/files.md`,
+        `${userId}/docs/guides/getting-started.md`,
         
-        `${user.id}/config/database.config.js`,
-        `${user.id}/config/environments/development.env`,
-        `${user.id}/config/environments/production.env`,
-        `${user.id}/config/environments/staging.env`,
+        `${userId}/config/database.config.js`,
+        `${userId}/config/environments/development.env`,
+        `${userId}/config/environments/production.env`,
+        `${userId}/config/environments/staging.env`,
         
-        `${user.id}/tests/unit/components/Header.test.ts`,
-        `${user.id}/tests/unit/utils/validators.test.ts`,
-        `${user.id}/tests/integration/auth.test.ts`,
-        `${user.id}/tests/e2e/user-journey.spec.ts`,
-        `${user.id}/tests/fixtures/sample-data.json`,
+        `${userId}/tests/unit/components/Header.test.ts`,
+        `${userId}/tests/unit/utils/validators.test.ts`,
+        `${userId}/tests/integration/auth.test.ts`,
+        `${userId}/tests/e2e/user-journey.spec.ts`,
+        `${userId}/tests/fixtures/sample-data.json`,
         
-        `${user.id}/build/dist/index.html`,
-        `${user.id}/build/dist/assets/bundle.js`,
-        `${user.id}/build/scripts/deploy.sh`,
-        `${user.id}/build/docker/Dockerfile`,
-        `${user.id}/build/docker/docker-compose.yml`,
+        `${userId}/build/dist/index.html`,
+        `${userId}/build/dist/assets/bundle.js`,
+        `${userId}/build/scripts/deploy.sh`,
+        `${userId}/build/docker/Dockerfile`,
+        `${userId}/build/docker/docker-compose.yml`,
         
-        `${user.id}/projects/2024/q1/january/week1/daily-reports/monday.txt`,
-        `${user.id}/projects/2024/q1/january/week1/daily-reports/tuesday.txt`,
-        `${user.id}/projects/2024/q2/april/presentations/client-meeting.pptx`,
-        `${user.id}/projects/2025/planning/roadmap/features/authentication/specs.md`,
-        `${user.id}/projects/2025/planning/roadmap/features/file-management/wireframes.fig`,
+        `${userId}/projects/2024/q1/january/week1/daily-reports/monday.txt`,
+        `${userId}/projects/2024/q1/january/week1/daily-reports/tuesday.txt`,
+        `${userId}/projects/2024/q2/april/presentations/client-meeting.pptx`,
+        `${userId}/projects/2025/planning/roadmap/features/authentication/specs.md`,
+        `${userId}/projects/2025/planning/roadmap/features/file-management/wireframes.fig`,
         
-        `${user.id}/downloads/document.pdf`,
-        `${user.id}/downloads/spreadsheet.xlsx`,
-        `${user.id}/downloads/archive.zip`,
-        `${user.id}/temp/cache/session-123.tmp`,
-        `${user.id}/temp/uploads/avatar-upload.png`,
+        `${userId}/downloads/document.pdf`,
+        `${userId}/downloads/spreadsheet.xlsx`,
+        `${userId}/downloads/archive.zip`,
+        `${userId}/temp/cache/session-123.tmp`,
+        `${userId}/temp/uploads/avatar-upload.png`,
         
-        `${user.id}/special chars/file with spaces.txt`,
-        `${user.id}/special chars/file-with-dashes.md`,
-        `${user.id}/special chars/file_with_underscores.js`,
-        `${user.id}/special chars/file.with.dots.config.json`,
+        `${userId}/special chars/file with spaces.txt`,
+        `${userId}/special chars/file-with-dashes.md`,
+        `${userId}/special chars/file_with_underscores.js`,
+        `${userId}/special chars/file.with.dots.config.json`,
     ];
     
-    
     await Promise.all(testFiles.map(filePath => uploadFileToSupabase('folders', filePath)));
+}
+
+async function pressMenuItem(page: Page, fileName: string, itemName: string) {
+    await page.getByTestId(fileName).locator('button').click();
+    await page.getByRole('menuitem', { name: itemName }).click();
+}
+
+test('test delete folder and files', async ({ page }) => {
+    const user = await loginAndCreateUser(page);
+    await createFolderStructure(user.id);
     
-    console.log('File structure created successfully!');
     await page.goto('/file-viewer');
-    await page.getByTestId('config').locator('button').click();
-    await page.getByRole('menuitem', { name: 'Delete' }).click();
-    
-    await page.getByTestId('README.md').locator('button').click();
-    await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+    await pressMenuItem(page, 'README.md', 'Delete');
+    await pressMenuItem(page, 'config', 'Delete');
 
 
     await expect(page.getByTestId('README.md')).not.toBeVisible();
@@ -93,4 +97,28 @@ test('test delete folder and files', async ({ page }) => {
     await page.reload({ waitUntil: 'networkidle' });
     await expect(page.getByTestId('config')).not.toBeVisible();
     await expect(page.getByTestId('README.md')).not.toBeVisible();
+});
+
+test('test move files', async ({ page }) => {
+    const user = await loginAndCreateUser(page);
+    await createFolderStructure(user.id);
+    
+    await page.goto('/file-viewer');
+    await pressMenuItem(page, 'README.md', 'Move');
+    await page.locator('#bits-9').getByTestId('downloads').click();
+    await page.getByRole('button', { name: 'move README.md to downloads' }).click();
+    await page.getByTestId('downloads').nth(0).click();
+    await expect(page.getByTestId('README.md')).toBeVisible();
+});
+
+test('test copy files', async ({ page }) => {
+    const user = await loginAndCreateUser(page);
+    await createFolderStructure(user.id);
+    
+    await page.goto('/file-viewer');
+    await pressMenuItem(page, 'README.md', 'Copy');
+    await page.locator('#bits-9').getByTestId('downloads').click();
+    await page.getByRole('button', { name: 'copy README.md to downloads' }).click();
+    await page.getByTestId('downloads').nth(0).click();
+    await expect(page.getByTestId('README.md')).toBeVisible();
 });

@@ -12,10 +12,12 @@
 
 	let {
 		child,
+		showActions = true,
 		actionList,
 		...restProps
 	}: {
 		child: ExplorerNode;
+		showActions?: boolean;
 		actionList: Snippet<[ExplorerNode]>;
 	} & WithElementRef<HTMLButtonAttributes> = $props();
 </script>
@@ -30,7 +32,9 @@
 			{:else}
 				<p class="text-muted-foreground text-xs">{displaySize(child?.fileData.size)}</p>
 			{/if}
-			{@render actionList(child)}
+			{#if showActions}
+				{@render actionList(child)}
+			{/if}
 		</div>
 	</div>
 </Button>

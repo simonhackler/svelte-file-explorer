@@ -12,7 +12,8 @@
 		getCoreRowModel,
 		getSortedRowModel,
 		getFilteredRowModel,
-		type SortingState
+		type SortingState,
+		type VisibilityState
 	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -27,12 +28,22 @@
 		display: 'list' | 'grid';
 		actionList: Snippet<[ExplorerNode]>;
 		onNodeClicked: (node: ExplorerNode) => void;
+		class?: string;
+        showActions?: boolean
 	};
+
+	let {
+		data,
+		class: className,
+		onNodeClicked,
+		display,
+		actionList,
+        showActions = true,
+	}: DataTableProps<ExplorerNode, TValue> = $props();
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
-
-	let { data, onNodeClicked, display, actionList }: DataTableProps<ExplorerNode, TValue> = $props();
+	let columnVisibility = $state<VisibilityState>({});
 
 	export const columns: ColumnDef<ExplorerNode>[] = [
 		{
@@ -85,19 +96,31 @@
 				columnFilters = updater;
 			}
 		},
+		onColumnVisibilityChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnVisibility = updater(columnVisibility);
+			} else {
+				columnVisibility = updater;
+			}
+		},
 		state: {
 			get sorting() {
 				return sorting;
 			},
 			get columnFilters() {
 				return columnFilters;
+			},
+			get columnVisibility() {
+				return columnVisibility;
 			}
 		}
 	});
+
+    table.getColumn('actions')?.toggleVisibility(showActions);
 </script>
 
-<div class="@container">
-	<div class="">
+<div class={cn('flex h-full flex-col', className)}>
+	<div class="flex-0">
 		<div class="flex items-center py-4">
 			<Input
 				placeholder="Filter files..."
@@ -116,7 +139,7 @@
 		</div>
 	</div>
 
-	<ScrollArea class="h-[65cqh]">
+	<ScrollArea class="min-h-0 flex-1 overflow-y-auto">
 		<div class="w-full rounded-md border">
 			<Table.Root>
 				<Table.Header>
@@ -165,6 +188,7 @@
 					{#each table.getRowModel().rows as row (row.id)}
 						<FileBrowserGridItem
 							child={row.original}
+                            {showActions}
 							onclick={() => onNodeClicked(row.original)}
 							{actionList}
 						/>

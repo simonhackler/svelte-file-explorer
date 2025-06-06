@@ -109,6 +109,20 @@
 		return URL.createObjectURL(data);
 	}
 
+    async function downloadFiles(paths: string[]) {
+        const files = await Promise.all(paths.map(async (path) => {
+		    const { data, error } = await supabase.storage.from('folders').download(`${path}`);
+            return {data, error};
+        }));
+        for (const file of files) {
+            if (file.error) {
+                console.error(file.error);
+                return file.error;
+            }
+        }
+        return files.map(file => file.data!);
+    }
+
 	async function uploadToSupabase(file: File, fullFolderPath: string) {
 		const filepath = `${user.id}/${fullFolderPath}/${file.name}`;
 		const { data, error } = await supabase.storage.from('folders').upload(filepath, file);
@@ -117,6 +131,7 @@
 		}
 		return URL.createObjectURL(file);
 	}
+
 
     async function deleteFiles(paths: string[]) {
 		const { data, error } = await supabase.storage.from('folders').remove(paths);
@@ -178,6 +193,12 @@
 			createFolderInput?.focus();
 		}
 	});
+
+    const fileFunctions = {
+        onDelete: deleteFiles,
+        download: downloadFiles
+    }
+
 </script>
 
 <Toaster />
@@ -231,81 +252,4 @@
 	</div>
 </div>
 
-<!-- <div>
-	<TreeViewRoot node={tree} />
-</div> -->
-
-<!-- <div
-	class="mx-4 mb-4 flex items-center justify-between rounded border border-gray-300 bg-gray-100 p-4"
->
-	<Breadcrumb.Root>
-		<Breadcrumb.List>
-			<BreadcrumbRecursive
-				folder={currentFolder}
-				isLast={true}
-				onBreadCrumbClick={(folder) => setCurrentFolder(folder)}
-			/>
-			<Breadcrumb.Separator />
-			<Breadcrumb.Item>
-				<Button onclick={() => (showCreateFolder = true)} variant="outline"
-					><Plus class="mr-2" />folder</Button
-				>
-			</Breadcrumb.Item>
-		</Breadcrumb.List>
-	</Breadcrumb.Root>
-	<div class="flex gap-2">
-		<Button variant="outline">Upload</Button>
-		<Button onclick={() => (showCreateFolder = true)} variant="outline"
-			><Plus class="mr-2" />Create folder</Button
-		>
-	</div>
-</div>
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
-	{#each currentFolder.children as child (child.name)}
-		<Button class="h-full w-full" ondblclick={() => doubleClickedItem(child)} variant="ghost" data-testid={child.name}>
-			<div class="flex w-full h-full flex-col items-center justify-center gap-4">
-				{#if isFolder(child)}
-					<FolderIcon class="size-8" />
-				{:else if child?.fileData?.url != undefined}
-					{#await child.fileData.url}
-						<FileIcon class="size-8" />
-					{:then url}
-						<img src={url} class="size-40 object-contain" alt={`preview for ${child.name}`} />
-					{/await}
-				{:else}
-					<FileIcon class="size-8" />
-				{/if}
-				<p>{child.name}</p>
-				<div class="flex w-full items-center justify-between">
-					{#if isFolder(child)}
-						<p class="text-muted-foreground text-xs">{child.children.length} items</p>
-					{:else}
-						<p class="text-muted-foreground text-xs">{displaySize(child?.fileData.size)}</p>
-					{/if}
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							<Ellipsis />
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content>
-							<DropdownMenu.Group>
-								<DropdownMenu.Item onclick={() => deleteNode(child)}><Trash2/> <span>Delete</span></DropdownMenu.Item>
-								<DropdownMenu.Item><Folders/><span>Copy</span></DropdownMenu.Item>
-								<DropdownMenu.Item><FolderOutput/>Move</DropdownMenu.Item>
-							</DropdownMenu.Group>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
-				</div>
-			</div>
-		</Button>
-	{/each}
-	{#if showCreateFolder}
-		<Button class="h-full w-full" variant="ghost">
-			<div class="flex h-full w-full flex-col items-center justify-center gap-4">
-				<FolderIcon class="size-8" />
-				<Input onfocusout={createFolder} bind:ref={createFolderInput as HTMLElement} />
-			</div>
-		</Button>
-	{/if}
-</div> -->
-
-<FileBrowser bind:currentFolder homeFolderPath={user.id + '/'} onDelete={deleteFiles}/>
+<FileBrowser bind:currentFolder homeFolderPath={user.id + '/'} {fileFunctions} class="min-h-96 max-h-96"/>

@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Plus } from '@lucide/svelte';
 	import {
+		deepCopyExplorerNode,
 		type ExplorerNode,
 		Folder,
 		isFolder
@@ -12,15 +13,25 @@
 	import DataTable from './data-table.svelte';
 	import { List, Grid2x2 } from '@lucide/svelte/icons';
 	import FileBrowserActions from './file-browser-actions.svelte';
+	import { cn } from '$lib/utils/utils';
+
+    interface FileFunctions {
+		onDelete: (files: string[]) => Promise<Error | null>;
+        download: (files: string[]) => Promise<Error | Blob[]>;
+    }
 
 	let {
 		currentFolder = $bindable(),
 		homeFolderPath = '/',
-		onDelete
+        fileFunctions,
+		class: className,
+        showActions = true
 	}: {
 		currentFolder: Folder;
-		onDelete?: (files: string[]) => Promise<Error | null>;
+        fileFunctions?: FileFunctions;
+		class?: string;
 		homeFolderPath?: string;
+        showActions?: boolean
 	} = $props();
 
 	let showCreateFolder = $state(false);
@@ -79,7 +90,7 @@
 		const path = homeFolderPath + getPath(node).slice(1).join('/');
 		const toDelete = getAllFiles(node, path);
 
-		const error = await onDelete(toDelete);
+		const error = await fileFunctions?.onDelete(toDelete);
 		if (error) {
 			console.error(error);
 		} else {
@@ -87,14 +98,62 @@
 		}
 	}
 
-	function moveNode(node: ExplorerNode) {}
+	async function downloadNode(node: ExplorerNode) {
+        const files = await fileFunctions?.download(getAllFiles(node, homeFolderPath + getPath(node).slice(1).join('/')));
+        if(files == undefined || files instanceof Error) {
+            console.error(files);
+            return;
+        }
+        if (files.length === 1) {
+            const blob = files[0];
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = node.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
 
-	function copyNode(node: ExplorerNode) {}
+	async function moveNode(node: ExplorerNode, newParent: Folder) {
+		// Have to update like this for state changes. Maybe there is a better way aka derived in the table
+		// So always have children as derived state
+		node.parent!.children = node.parent!.children.filter((f) => f.name !== node.name);
+		newParent.children = [...newParent.children, node];
+        node.parent = newParent;
+		return null;
+	}
+
+	async function copyNode(node: ExplorerNode, newParent: Folder) {
+		const originalName = node.name;
+
+		let baseName = originalName;
+		let extension = '';
+		const dotIndex = originalName.lastIndexOf('.');
+		if (dotIndex !== -1) {
+			baseName = originalName.substring(0, dotIndex);
+			extension = originalName.substring(dotIndex); // includes the “.”
+		}
+
+		let name = originalName;
+		let i = 1;
+		while (newParent.children.find((f) => f.name === name)) {
+			name = `${baseName}_copy_${i}${extension}`;
+			i++;
+		}
+		const newNode = deepCopyExplorerNode(node, newParent);
+        newNode.name = name;
+        newParent.children = [...newParent.children, newNode];
+		return null;
+	}
+
 </script>
 
-<div class="h-[100cqh]">
+<div class={cn('flex flex-col', className)}>
 	<div
-		class="mx-4 mb-4 flex items-center justify-between rounded border border-gray-300 bg-gray-100 p-4"
+		class="mx-4 mb-4 flex flex-0 items-center justify-between rounded border border-gray-300 bg-gray-100 p-4"
 	>
 		<Breadcrumb.Root>
 			<Breadcrumb.List>
@@ -126,9 +185,15 @@
 		</div>
 	</div>
 
-	<DataTable data={currentFolder.children} onNodeClicked={clickedNode} {display}>
+	<DataTable
+		data={currentFolder.children}
+		onNodeClicked={clickedNode}
+		{display}
+		class="min-h-0 flex-1"
+        {showActions}
+	>
 		{#snippet actionList(node: ExplorerNode)}
-			<FileBrowserActions {node} onDelete={deleteNode} onMove={moveNode} onCopy={copyNode} />
+			<FileBrowserActions {node} onDelete={deleteNode} onMove={moveNode} onCopy={copyNode} onDownload={downloadNode} />
 		{/snippet}
 	</DataTable>
 </div>
