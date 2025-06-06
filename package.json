@@ -67,6 +67,7 @@
 	"dependencies": {
 		"@supabase/ssr": "^0.6.1",
 		"@supabase/supabase-js": "^2.49.8",
+		"client-zip": "^2.5.0",
 		"dotenv": "^16.5.0",
 		"supabase": "^2.23.4",
 		"svelte-sonner": "^1.0.3"

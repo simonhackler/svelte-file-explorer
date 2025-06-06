@@ -122,3 +122,11 @@ test('test copy files', async ({ page }) => {
     await page.getByTestId('downloads').nth(0).click();
     await expect(page.getByTestId('README.md')).toBeVisible();
 });
+
+test('create folder', async ({ page }) => {
+    const user = await loginAndCreateUser(page);
+    await createFolderStructure(user.id);
+    
+    await page.goto('/file-viewer');
+
+});

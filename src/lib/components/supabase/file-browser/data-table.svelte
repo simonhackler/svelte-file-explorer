@@ -5,7 +5,6 @@
 	import DataTableNameButton from './data-table-name-button.svelte';
 	import FileBrowserItemIcon from './file-browser-item-icon.svelte';
 	import { displaySize } from '$lib/components/ui/file-drop-zone';
-	import FileBrowserActions from './file-browser-actions.svelte';
 	import {
 		type ColumnDef,
 		type ColumnFiltersState,

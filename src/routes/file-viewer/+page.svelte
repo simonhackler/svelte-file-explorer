@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { FolderIcon, FileIcon, Plus, Ellipsis, Trash2, Folders, FolderOutput } from '@lucide/svelte';
+	import {
+		FolderIcon,
+		FileIcon,
+		Plus,
+		Ellipsis,
+		Trash2,
+		Folders,
+		FolderOutput
+	} from '@lucide/svelte';
 	import {
 		displaySize,
 		FileDropZone,
@@ -22,9 +29,6 @@
 	} from '$lib/components/supabase/file-viewer/types.svelte';
 	import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
 
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import BreadcrumbRecursive from '$lib/components/supabase/file-viewer/breadcrumb-recursive.svelte';
-	import { Input } from '$lib/components/ui/input';
 	import FileBrowser from '$lib/components/supabase/file-browser/file-browser.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -109,19 +113,23 @@
 		return URL.createObjectURL(data);
 	}
 
-    async function downloadFiles(paths: string[]) {
-        const files = await Promise.all(paths.map(async (path) => {
-		    const { data, error } = await supabase.storage.from('folders').download(`${path}`);
-            return {data, error};
-        }));
-        for (const file of files) {
-            if (file.error) {
-                console.error(file.error);
-                return file.error;
-            }
-        }
-        return files.map(file => file.data!);
-    }
+	async function downloadFiles(paths: string[]) {
+		const files = await Promise.all(
+			paths.map(async (path) => {
+				const { data, error } = await supabase.storage.from('folders').download(`${path}`);
+				return { path, data, error };
+			})
+		);
+		for (const file of files) {
+			if (file.error) {
+				console.error(file.error);
+				return file.error;
+			}
+		}
+		return files.map((file) => {
+			return { path: file.path, data: file.data! };
+		});
+	}
 
 	async function uploadToSupabase(file: File, fullFolderPath: string) {
 		const filepath = `${user.id}/${fullFolderPath}/${file.name}`;
@@ -132,11 +140,10 @@
 		return URL.createObjectURL(file);
 	}
 
-
-    async function deleteFiles(paths: string[]) {
+	async function deleteFiles(paths: string[]) {
 		const { data, error } = await supabase.storage.from('folders').remove(paths);
-        return error;
-    }
+		return error;
+	}
 
 	function createFolder(inputEvent: Event) {
 		showCreateFolder = false;
@@ -147,32 +154,6 @@
 		currentFolder.children.push(new Folder(newFolderName, currentFolder, []));
 	}
 
-    function getAllFiles(node: ExplorerNode, currentPath: string): string[] {
-        if (isFolder(node)) {
-            const paths = [];
-            for (let child of node.children) {
-                const childPaths = getAllFiles(child, currentPath + '/' + child.name);
-                paths.push(...childPaths);
-            }
-            return paths;
-        } else {
-            return [currentPath];
-        }
-    }
-
-    async function deleteNode(node: ExplorerNode) {
-        const path = getPath(node).slice(1).join('/');
-        const fullPath = `${user.id}/${path}`
-        const toDelete = getAllFiles(node, fullPath);
-        const { data, error } = await supabase.storage.from('folders').remove(toDelete);
-        if (error) {
-            console.error(error);
-        } else {
-            console.log(data);
-            currentFolder.children = currentFolder.children.filter((f) => f.name !== node.name);
-        }
-    }
-
 	$effect(() => {
 		for (let child of currentFolder.children) {
 			if (
@@ -181,9 +162,7 @@
 				child.fileData.mimetype.startsWith('image/') &&
 				child.fileData.url == undefined
 			) {
-				child.fileData.url = downloadFile(
-					user.id + '/' + getPath(child).slice(1).join('/')
-				);
+				child.fileData.url = downloadFile(user.id + '/' + getPath(child).slice(1).join('/'));
 			}
 		}
 	});
@@ -194,11 +173,10 @@
 		}
 	});
 
-    const fileFunctions = {
-        onDelete: deleteFiles,
-        download: downloadFiles
-    }
-
+	const fileFunctions = {
+		onDelete: deleteFiles,
+		download: downloadFiles
+	};
 </script>
 
 <Toaster />
@@ -252,4 +230,9 @@
 	</div>
 </div>
 
-<FileBrowser bind:currentFolder homeFolderPath={user.id + '/'} {fileFunctions} class="min-h-96 max-h-96"/>
+<FileBrowser
+	bind:currentFolder
+	homeFolderPath={user.id + '/'}
+	{fileFunctions}
+	class=""
+/>

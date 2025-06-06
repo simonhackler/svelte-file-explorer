@@ -17,9 +17,11 @@ export abstract class ExplorerNodeBase {
 
 export class FileLeaf extends ExplorerNodeBase {
     fileData = $state<FileData | undefined>(undefined);
-    constructor(name: string, parent: Folder | null = null, fileData?: FileData) {
+    blob: Blob | null = null;
+    constructor(name: string, parent: Folder | null = null, fileData?: FileData, blob: Blob | null= null) {
         super(name, parent);
         this.fileData = fileData;
+        this.blob = blob
     }
 }
 

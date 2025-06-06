@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 
-	import { FolderIcon, FileIcon } from '@lucide/svelte';
 	import { displaySize } from '$lib/components/ui/file-drop-zone';
 	import { isFolder, type ExplorerNode } from '$lib/components/supabase/file-viewer/types.svelte';
-	import FileBrowserActions from './file-browser-actions.svelte';
 	import FileBrowserItemIcon from './file-browser-item-icon.svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import type { WithElementRef } from '$lib/utils/utils';
