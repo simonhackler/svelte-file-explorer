@@ -45,3 +45,27 @@ create policy "Delete own files"
 on storage.objects for delete
 to authenticated
 using ( (select auth.uid()) = owner_id::uuid );
+
+CREATE POLICY "Allow update on user folder"
+  ON storage.objects
+  FOR UPDATE
+  TO authenticated
+  USING (
+    bucket_id = 'folders'
+    AND (storage.foldername(name))[1] = (SELECT auth.uid()::text)
+  )
+  WITH CHECK (
+    bucket_id = 'folders'
+    AND (storage.foldername(name))[1] = (SELECT auth.uid()::text)
+  );
+
+CREATE POLICY "Update own files"
+  ON storage.objects
+  FOR UPDATE
+  TO authenticated
+  USING (
+    (SELECT auth.uid()) = owner_id::uuid
+  )
+  WITH CHECK (
+    (SELECT auth.uid()) = owner_id::uuid
+  );

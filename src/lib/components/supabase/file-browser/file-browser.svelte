@@ -21,7 +21,9 @@
 	interface FileFunctions {
 		onDelete: (files: string[]) => Promise<Error | null>;
 		download: (files: string[]) => Promise<Error | { path: string; data: Blob }[]>;
-        upload: (file: File) => Promise<Error | { path: string; data: Blob }>;
+		upload: (file: File, fullFolderPath: string, overwrite?: boolean) => Promise<Error | null>;
+		move: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
+		copy: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
 	}
 
 	let {
@@ -62,13 +64,28 @@
 		}
 	}
 
-    async function onUpload(file: File) {
-        const error = await fileFunctions?.upload(file);
-        if (error) {
-            console.error(error);
-        }
-        currentFolder.children.push(new FileLeaf(file.name, currentFolder, { mimetype: file.type, size: file.size, updatedAt: new Date(file.lastModified) }, file));
-    }
+	async function onUpload(file: File, overwrite?: boolean) {
+		const error = await fileFunctions?.upload(
+			file,
+			getPath(currentFolder).slice(1).join('/'),
+			overwrite
+		);
+		if (error) {
+			console.error(error);
+			return error;
+		}
+		currentFolder.children = [
+			...currentFolder.children,
+			new FileLeaf(
+				file.name,
+				currentFolder,
+				{ mimetype: file.type, size: file.size, updatedAt: new Date(file.lastModified) },
+				file
+			)
+		];
+
+		return null;
+	}
 
 	function createFolder(inputEvent: Event) {
 		showCreateFolder = false;
@@ -139,6 +156,16 @@
 	}
 
 	async function moveNode(node: ExplorerNode, newParent: Folder) {
+		const error = await fileFunctions?.move([
+			{
+				filePath: homeFolderPath + getPath(node).slice(1).join('/'),
+				path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + node.name
+			}
+		]);
+		if (error) {
+			console.error(error);
+			return error;
+		}
 		// Have to update like this for state changes. Maybe there is a better way aka derived in the table
 		// So always have children as derived state
 		node.parent!.children = node.parent!.children.filter((f) => f.name !== node.name);
@@ -164,6 +191,16 @@
 			name = `${baseName}_copy_${i}${extension}`;
 			i++;
 		}
+		const error = await fileFunctions?.copy([
+			{
+				filePath: homeFolderPath + getPath(node).slice(1).join('/'),
+				path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + name
+			}
+		]);
+        if (error) {
+            console.error(error);
+            return error;
+        }
 		const newNode = deepCopyExplorerNode(node, newParent);
 		newNode.name = name;
 		newParent.children = [...newParent.children, newNode];
@@ -192,7 +229,10 @@
 		</Breadcrumb.Root>
 		<div class="flex gap-2">
 			<!-- <Button variant="outline">Upload</Button> -->
-            <FileUpload uploadToAdapter={fileFunctions?.upload} />
+			<FileUpload
+				uploadToAdapter={onUpload}
+				filesInFolder={currentFolder.children.map((f) => f.name)}
+			/>
 			<Button onclick={() => (showCreateFolder = true)} variant="outline"
 				><Plus class="mr-2" />Create folder</Button
 			>
@@ -210,7 +250,7 @@
 		data={currentFolder.children}
 		onNodeClicked={clickedNode}
 		{display}
-		class="min-h-0 flex-1 mx-4"
+		class="mx-4 min-h-0 flex-1"
 		{showActions}
 	>
 		{#snippet actionList(node: ExplorerNode)}

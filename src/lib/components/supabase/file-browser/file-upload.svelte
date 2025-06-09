@@ -8,18 +8,19 @@
 		MEGABYTE,
 		type FileDropZoneProps
 	} from '$lib/components/ui/file-drop-zone';
-	import { Progress } from '$lib/components/ui/progress';
-	import { sleep } from '$lib/utils/sleep';
 	import { XIcon } from '@lucide/svelte';
 	import { onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { SvelteDate } from 'svelte/reactivity';
+	import { Input } from '$lib/components/ui/input';
+	import type { Attachment } from 'svelte/attachments';
 
 	interface Props {
-		uploadToAdapter: (file: File) => Promise<Error | null>;
+		uploadToAdapter: (file: File, overwrite?: boolean) => Promise<Error | null>;
+		filesInFolder: string[];
 	}
 
-	let { uploadToAdapter } = $props();
+	let { uploadToAdapter, filesInFolder }: Props = $props();
 
 	const onUpload: FileDropZoneProps['onUpload'] = async (files) => {
 		await Promise.allSettled(files.map((file) => uploadFile(file)));
@@ -27,49 +28,69 @@
 	const onFileRejected: FileDropZoneProps['onFileRejected'] = async ({ reason, file }) => {
 		toast.error(`${file.name} failed to upload!`, { description: reason });
 	};
-    // This should be done completely differently. Uploading files as icons into the folder structure
-	const uploadFile = async (file: File) => {
-		// don't upload duplicate files
-		if (files.find((f) => f.name === file.name)) return;
-		const urlPromise = new Promise<string>((resolve) => {
-			// add some fake loading time
-			sleep(1000).then(() => resolve(URL.createObjectURL(file)));
-		});
+	const uploadFile = (file: File) => {
+		if (files.find((f) => f.file.name === file.name)) return;
+		const error = filesInFolder.find((f) => f === file.name) ? 'File already exists' : null;
 		files.push({
 			name: file.name,
-			type: file.type,
-			size: file.size,
 			uploadedAt: Date.now(),
-			url: urlPromise
+			error,
+			url: URL.createObjectURL(file),
+			file,
+			rename: false,
+			overwrite: false
 		});
-		// we await since we don't want the onUpload to be complete until the files are actually uploaded
-		await urlPromise;
 	};
 	type UploadedFile = {
 		name: string;
-		type: string;
-		size: number;
+		file: File;
 		uploadedAt: number;
-		url: Promise<string>;
+		url: string;
+		error: string | null;
+		rename: boolean;
+		overwrite: boolean;
 	};
 	let files = $state<UploadedFile[]>([]);
-	let date = new SvelteDate();
 	onDestroy(async () => {
 		for (const file of files) {
-			URL.revokeObjectURL(await file.url);
+			URL.revokeObjectURL(file.url);
 		}
 	});
-	$effect(() => {
-		const interval = setInterval(() => {
-			date.setTime(Date.now());
-		}, 10);
-		return () => {
-			clearInterval(interval);
-		};
-	});
+
+	$effect(() => {});
+
+	const uploadDisabled = $derived(files.length == 0 || files.some((f) => f.error !== null));
+
+	async function uploadFiles() {
+		const errors = await Promise.all(files.map((f) => uploadToAdapter(f.file, f.overwrite)));
+		if (errors.some((e) => e !== null)) {
+		} else {
+			open = false;
+			files = [];
+		}
+	}
+
+	let open = $state(false);
+
+	const focusElement: Attachment = (inputElement: HTMLInputElement) => {
+		inputElement.focus();
+	};
+
+	function onBlurRename(file: UploadedFile) {
+		file.rename = false;
+		if (!filesInFolder.includes(file.name)) {
+			file.error = null;
+		}
+		file.file = new File([file.file], file.name);
+	}
+
+	function overwriteFile(file: UploadedFile) {
+		file.overwrite = !file.overwrite;
+		file.error = null;
+	}
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open>
 	<Dialog.Trigger>
 		<Button variant="outline"><Upload />Upload</Button>
 	</Dialog.Trigger>
@@ -82,49 +103,59 @@
 					{onUpload}
 					{onFileRejected}
 					maxFileSize={6 * MEGABYTE}
-					accept="image/*"
 					maxFiles={4}
 					fileCount={files.length}
 				/>
 				<div class="flex flex-col gap-2">
-					{#each files as file, i (file.name)}
+					{#each files as file, i (file.file.name)}
 						<div class="flex place-items-center justify-between gap-2">
 							<div class="flex place-items-center gap-2">
-								{#await file.url then src}
-									<div class="relative size-9 overflow-clip">
-										<img
-											{src}
-											alt={file.name}
-											class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-clip"
-										/>
-									</div>
-								{/await}
+								<div class="relative size-9 overflow-clip">
+									<img
+										src={file.url}
+										alt={file.file.name}
+										class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-clip"
+									/>
+								</div>
 								<div class="flex flex-col">
-									<span>{file.name}</span>
-									<span class="text-muted-foreground text-xs">{displaySize(file.size)}</span>
+									{#if file.rename}
+										<Input
+											type="text"
+											bind:value={file.name}
+											autofocus
+											{@attach focusElement}
+											onblur={() => onBlurRename(file)}
+											onkeydown={(e) => e.key === 'Enter' && onBlurRename(file)}
+										/>
+									{:else}
+										<span>{file.name}</span>
+									{/if}
+									<span class="text-muted-foreground text-xs">{displaySize(file.file.size)}</span>
 								</div>
 							</div>
-							{#await file.url}
-								<Progress
-									class="h-2 w-full grow"
-									value={((date.getTime() - file.uploadedAt) / 1000) * 100}
-									max={100}
-								/>
-							{:then url}
-								<Button
-									variant="outline"
-									size="icon"
-									onclick={() => {
-										URL.revokeObjectURL(url);
-										files = [...files.slice(0, i), ...files.slice(i + 1)];
-									}}
-								>
-									<XIcon />
-								</Button>
-							{/await}
+							<Button
+								variant="outline"
+								size="icon"
+								onclick={() => {
+									URL.revokeObjectURL(file.url);
+									files = [...files.slice(0, i), ...files.slice(i + 1)];
+								}}
+							>
+								<XIcon />
+							</Button>
 						</div>
+						{#if file.error && !file.rename && !file.overwrite}
+							<div class="flex justify-between">
+								<span class="text-red-500">{file.error}</span>
+								<div class="flex gap-2">
+									<Button onclick={() => (file.rename = true)} variant="outline">Rename</Button>
+									<Button onclick={() => overwriteFile(file)} variant="outline">Overwrite</Button>
+								</div>
+							</div>
+						{/if}
 					{/each}
 				</div>
+				<Button type="submit" disabled={uploadDisabled} onclick={uploadFiles}>Upload</Button>
 			</div>
 		</Dialog.Header>
 	</Dialog.Content>

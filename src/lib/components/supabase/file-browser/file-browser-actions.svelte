@@ -52,10 +52,6 @@
 	}
 
 	const url = $derived(!isFolder(node) && node.fileData?.url?.then((url) => url));
-
-	onDestroy(() => {
-		console.log('destroyed');
-	});
 </script>
 
 <DropdownMenu.Root>

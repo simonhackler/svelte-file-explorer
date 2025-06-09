@@ -12,7 +12,6 @@ interface BuildFolder {
     children: Map<string, BuildNode>;
 }
 
-
 type BuildNode = BuildFolder | { name: string, fileData: FileData };
 
 function buildTree(filePathList: InputPath[],) {
@@ -36,7 +35,6 @@ function subBuild(current: BuildFolder, pathTokens: string[], fileData: FileData
             }
             current.children.set(token, next);
         }
-
         if ('children' in next) current = next;
     }
 }
@@ -97,6 +95,54 @@ export async function getAllFilesAndConvertToTree(
         }));
     const buildRoot = buildTree(filePathList);
 
-    return { data: convertToArray(buildRoot, null), error: null };
+    return { data: convertToArray(buildRoot, null) as Folder, error: null };
 }
 
+function base64Size(b64: string) {
+    return Math.ceil((b64.length * 3) / 4);
+}
+
+export function buildTreeFromLocalStorage(prefix: string): Folder {
+    const filePathList: {
+        pathTokens: string[];
+        fileData: { size: number; mimetype: string; updatedAt: Date };
+    }[] = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)!;
+        if (!key.startsWith(prefix)) continue;
+
+        console.log(`getting item at key ${key}`)
+        const stored = localStorage.getItem(key)!;
+        console.log(stored);
+        let dataURL: string;
+        let size = 0;
+        let mimetype = 'application/octet-stream';
+        let updatedAt = new Date(0);
+
+        try {
+            const obj = JSON.parse(stored);
+            if (obj?.dataURL) {
+                dataURL = obj.dataURL;
+                size = obj.size ?? base64Size(dataURL.split(',')[1] ?? '');
+                mimetype = obj.mimetype ?? mimetype;
+                updatedAt = new Date(obj.updatedAt ?? Date.now());
+            } else {
+                dataURL = stored;
+                size = base64Size(dataURL.split(',')[1] ?? '');
+            }
+        } catch (_e) {
+            dataURL = stored;
+            size = base64Size(dataURL.split(',')[1] ?? '');
+        }
+
+        const rel = key.slice(prefix.length); // strip namespace
+        const pathTokens = rel.split('/');
+
+        filePathList.push({ pathTokens, fileData: { size, mimetype, updatedAt } });
+        console.log(key)
+    }
+
+    const buildRoot = buildTree(filePathList);
+    return convertToArray(buildRoot, null) as Folder;
+}

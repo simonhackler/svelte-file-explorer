@@ -1,17 +1,13 @@
 import { expect, test } from '@playwright/test';
-import { supabase_full_access } from './supabase';
+import { StorageService, SupabaseStorageService } from './storage-service'; // Import the new service
 import { generateRandomUserMail, loginAndCreateUser } from './helper';
 import type { Page } from '@playwright/test';
+import { LocalStorageService } from './local-storage-service';
 
-async function uploadFileToSupabase(bucketName: string, filePath: string, fileContent: Blob = new Blob()) {
-    const { data, error } = await supabase_full_access.storage.from(bucketName).upload(filePath, fileContent);
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
-}
+const supabaseStorageService = new SupabaseStorageService(); // Instantiate the service
+const localStorageFileService = new LocalStorageService('/home'); // Instantiate the service
 
-async function createFolderStructure(userId: string) {
+async function createFolderStructure(page: Page, storageService: StorageService, userId: string) {
     const testFiles = [
         `${userId}/README.md`,
         `${userId}/package.json`,
@@ -74,7 +70,7 @@ async function createFolderStructure(userId: string) {
         `${userId}/special chars/file.with.dots.config.json`,
     ];
     
-    await Promise.all(testFiles.map(filePath => uploadFileToSupabase('folders', filePath)));
+    await Promise.all(testFiles.map(filePath => storageService.uploadFile(page, 'folders', filePath)));
 }
 
 async function pressMenuItem(page: Page, fileName: string, itemName: string) {
@@ -82,11 +78,15 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
     await page.getByRole('menuitem', { name: itemName }).click();
 }
 
-test('test delete folder and files', async ({ page }) => {
-    const user = await loginAndCreateUser(page);
-    await createFolderStructure(user.id);
-    
-    await page.goto('/file-viewer');
+[
+    {service: supabaseStorageService, name: 'Supabase Storage Service'},
+    {service: localStorageFileService, name: 'Local Storage Service'}
+].forEach(storageService => {
+test(`${storageService.name} test delete folder and files`, async ({ page }) => {
+    const path = await storageService.service.beforeEach(page);
+
+    await createFolderStructure(page, storageService.service, path);
+    await page.reload();
 
     await pressMenuItem(page, 'README.md', 'Delete');
     await pressMenuItem(page, 'config', 'Delete');
@@ -94,9 +94,10 @@ test('test delete folder and files', async ({ page }) => {
 
     await expect(page.getByTestId('README.md')).not.toBeVisible();
     await expect(page.getByTestId('config')).not.toBeVisible();
-    await page.reload({ waitUntil: 'networkidle' });
-    await expect(page.getByTestId('config')).not.toBeVisible();
-    await expect(page.getByTestId('README.md')).not.toBeVisible();
+
+    await storageService.service.checkFileExistence(page, path, 'README.md', false);
+    await storageService.service.checkFileExistence(page, path, 'config', false);
+});
 });
 
 test('test move files', async ({ page }) => {
@@ -105,10 +106,17 @@ test('test move files', async ({ page }) => {
     
     await page.goto('/file-viewer');
     await pressMenuItem(page, 'README.md', 'Move');
-    await page.locator('#bits-9').getByTestId('downloads').click();
+    await page.getByTestId('downloads').nth(1).click();
     await page.getByRole('button', { name: 'move README.md to downloads' }).click();
-    await page.getByTestId('downloads').nth(0).click();
+    
+    await page.getByTestId('downloads').nth(0).click(); 
     await expect(page.getByTestId('README.md')).toBeVisible();
+    await page.getByRole('button', { name: 'home' }).click(); 
+    await expect(page.getByTestId('README.md')).not.toBeVisible();
+
+    await supabaseStorageService.checkFileExistence(user.id, 'README.md', false);
+
+    await supabaseStorageService.checkFileExistence(`${user.id}/downloads`, 'README.md', true);
 });
 
 test('test copy files', async ({ page }) => {
@@ -117,16 +125,68 @@ test('test copy files', async ({ page }) => {
     
     await page.goto('/file-viewer');
     await pressMenuItem(page, 'README.md', 'Copy');
-    await page.locator('#bits-9').getByTestId('downloads').click();
+    await page.getByTestId('downloads').nth(1).click();
     await page.getByRole('button', { name: 'copy README.md to downloads' }).click();
-    await page.getByTestId('downloads').nth(0).click();
+
+    await page.getByTestId('downloads').nth(0).click(); 
     await expect(page.getByTestId('README.md')).toBeVisible();
+    await page.getByRole('button', { name: 'home' }).click(); 
+    await expect(page.getByTestId('README.md')).toBeVisible(); 
+
+    await supabaseStorageService.checkFileExistence(user.id, 'README.md', true);
+
+    await supabaseStorageService.checkFileExistence(`${user.id}/downloads`, 'README.md', true);
 });
 
-test('create folder', async ({ page }) => {
+test('upload file, upload overwrite and upload rename', async ({ page }) => {
     const user = await loginAndCreateUser(page);
     await createFolderStructure(user.id);
     
-    await page.goto('/file-viewer');
+    await page.goto('/file-viewer', {waitUntil: 'networkidle'});
+    await page.getByText('Upload').click();
 
+    const buffer = Buffer.from('hello, world!', 'utf-8');
+    const name = 'greeting.txt';
+
+    await page.setInputFiles('input[type="file"]', {
+        name,
+      mimeType: 'text/plain',
+      buffer
+    });
+    await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
+    await expect(page.getByTestId(name)).toBeVisible(); // Added back
+
+    // Verify with Supabase
+    await supabaseStorageService.checkFileExistence(user.id, name, true);
+
+
+    await page.getByText('Upload').nth(0).click();
+    await page.setInputFiles('input[type="file"]', {
+        name,
+      mimeType: 'text/plain',
+      buffer
+    });
+    await page.getByRole('button', { name: 'Overwrite' }).click();
+    await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
+    await expect(page.getByTestId(name)).toBeVisible(); // Added back
+
+    // Verify overwrite with Supabase by calling storageService.checkFileExistence directly
+    await supabaseStorageService.checkFileExistence(user.id, name, true);
+
+
+    await page.getByText('Upload').nth(0).click();
+    await page.setInputFiles('input[type="file"]', {
+        name,
+      mimeType: 'text/plain',
+      buffer
+    });
+    const renamedName = 'greeting-renamed.txt';
+    await page.getByRole('button', { name: 'Rename' }).click();
+    await page.locator('input[type="text"]').fill(renamedName);
+    await page.getByRole('heading', { name: 'Upload files' }).click();
+    await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
+    await expect(page.getByTestId(renamedName)).toBeVisible(); // Added back
+
+    // Verify rename with Supabase by calling storageService.checkFileExistence directly
+    await supabaseStorageService.checkFileExistence(user.id, renamedName, true);
 });
