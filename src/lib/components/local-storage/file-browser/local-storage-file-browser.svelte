@@ -11,8 +11,7 @@
 	let tree = $state<Folder>(new Folder('home', null, []));
 	let currentFolder = $state<Folder>(tree);
 
-	// ------- helpers -------
-	const keyFor = (path: string) => `${homePath}/${path}`;
+	const keyFor = (path: string) => `${path}`;
 
 	function pathArray(node: ExplorerNode) {
 		const parts = [node.name];
@@ -57,7 +56,7 @@
 	}
 
 	async function upload(file: File, folderPath: string, overwrite = false) {
-		const key = keyFor(`${folderPath}${file.name}`);
+		const key = keyFor(`${homePath}/${folderPath}${file.name}`);
 		console.log('uploading to ' + key);
 		if (!overwrite && localStorage.getItem(key)) return new Error(`File exists: ${key}`);
 
@@ -69,7 +68,40 @@
 	}
 
 	async function remove(paths: string[]) {
-		paths.forEach((p) => localStorage.removeItem((p)));
+		paths.forEach((p) => localStorage.removeItem(keyFor(p)));
+		return null;
+	}
+
+	async function move(files: { filePath: string; path: string }[]) {
+		for (const file of files) {
+			// Get the source file data
+			const sourceKey = keyFor(file.filePath);
+			const dataURL = localStorage.getItem(sourceKey);
+			if (!dataURL) continue;
+
+			// Save to destination
+			const destKey = keyFor(file.path);
+			localStorage.setItem(destKey, dataURL);
+
+			// Remove from source
+			localStorage.removeItem(sourceKey);
+		}
+
+		return null;
+	}
+
+	async function copy(files: { filePath: string; path: string }[]) {
+		for (const file of files) {
+			// Get the source file data
+			const sourceKey = keyFor(file.filePath);
+			const dataURL = localStorage.getItem(sourceKey);
+			if (!dataURL) continue;
+
+			// Save to destination
+			const destKey = keyFor(file.path);
+			localStorage.setItem(destKey, dataURL);
+		}
+
 		return null;
 	}
 
@@ -90,8 +122,8 @@
 		onDelete: remove,
 		download: downloadFiles,
 		upload,
-		move: noop,
-		copy: noop
+		move,
+		copy
 	};
 </script>
 

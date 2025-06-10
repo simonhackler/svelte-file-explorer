@@ -75,7 +75,7 @@
 			return error;
 		}
 		currentFolder.children = [
-			...currentFolder.children,
+			...currentFolder.children.filter((f) => f.name !== file.name),
 			new FileLeaf(
 				file.name,
 				currentFolder,

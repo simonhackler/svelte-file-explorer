@@ -112,9 +112,7 @@ export function buildTreeFromLocalStorage(prefix: string): Folder {
         const key = localStorage.key(i)!;
         if (!key.startsWith(prefix)) continue;
 
-        console.log(`getting item at key ${key}`)
         const stored = localStorage.getItem(key)!;
-        console.log(stored);
         let dataURL: string;
         let size = 0;
         let mimetype = 'application/octet-stream';

@@ -86,8 +86,10 @@ test(`${storageService.name} test delete folder and files`, async ({ page }) => 
     const path = await storageService.service.beforeEach(page);
 
     await createFolderStructure(page, storageService.service, path);
-    await page.reload();
+    await page.reload({ waitUntil: 'networkidle' });
 
+    await storageService.service.checkFileExistence(page, path, 'README.md', true);
+    await storageService.service.checkFileExistence(page, path, 'config/environments/development.env', true);
     await pressMenuItem(page, 'README.md', 'Delete');
     await pressMenuItem(page, 'config', 'Delete');
 
@@ -96,15 +98,14 @@ test(`${storageService.name} test delete folder and files`, async ({ page }) => 
     await expect(page.getByTestId('config')).not.toBeVisible();
 
     await storageService.service.checkFileExistence(page, path, 'README.md', false);
-    await storageService.service.checkFileExistence(page, path, 'config', false);
-});
+    await storageService.service.checkFileExistence(page, path, 'config/environments/development.env', false);
 });
 
-test('test move files', async ({ page }) => {
-    const user = await loginAndCreateUser(page);
-    await createFolderStructure(user.id);
+test(`${storageService.name} test move files`, async ({ page }) => {
+    const path = await storageService.service.beforeEach(page);
+    await createFolderStructure(page, storageService.service, path);
+    await page.reload({ waitUntil: 'networkidle' });
     
-    await page.goto('/file-viewer');
     await pressMenuItem(page, 'README.md', 'Move');
     await page.getByTestId('downloads').nth(1).click();
     await page.getByRole('button', { name: 'move README.md to downloads' }).click();
@@ -114,16 +115,15 @@ test('test move files', async ({ page }) => {
     await page.getByRole('button', { name: 'home' }).click(); 
     await expect(page.getByTestId('README.md')).not.toBeVisible();
 
-    await supabaseStorageService.checkFileExistence(user.id, 'README.md', false);
-
-    await supabaseStorageService.checkFileExistence(`${user.id}/downloads`, 'README.md', true);
+    await storageService.service.checkFileExistence(page, path, 'README.md', false);
+    await storageService.service.checkFileExistence(page, `${path}/downloads`, 'README.md', true);
 });
 
-test('test copy files', async ({ page }) => {
-    const user = await loginAndCreateUser(page);
-    await createFolderStructure(user.id);
+test(`${storageService.name} test copy files`, async ({ page }) => {
+    const path = await storageService.service.beforeEach(page);
+    await createFolderStructure(page, storageService.service, path);
+    await page.reload({ waitUntil: 'networkidle' });
     
-    await page.goto('/file-viewer');
     await pressMenuItem(page, 'README.md', 'Copy');
     await page.getByTestId('downloads').nth(1).click();
     await page.getByRole('button', { name: 'copy README.md to downloads' }).click();
@@ -133,16 +133,15 @@ test('test copy files', async ({ page }) => {
     await page.getByRole('button', { name: 'home' }).click(); 
     await expect(page.getByTestId('README.md')).toBeVisible(); 
 
-    await supabaseStorageService.checkFileExistence(user.id, 'README.md', true);
-
-    await supabaseStorageService.checkFileExistence(`${user.id}/downloads`, 'README.md', true);
+    await storageService.service.checkFileExistence(page, path, 'README.md', true);
+    await storageService.service.checkFileExistence(page, `${path}/downloads`, 'README.md', true);
 });
 
-test('upload file, upload overwrite and upload rename', async ({ page }) => {
-    const user = await loginAndCreateUser(page);
-    await createFolderStructure(user.id);
+test(`${storageService.name} upload file, upload overwrite and upload rename`, async ({ page }) => {
+    const path = await storageService.service.beforeEach(page);
+    await createFolderStructure(page, storageService.service, path);
+    await page.reload({ waitUntil: 'networkidle' });
     
-    await page.goto('/file-viewer', {waitUntil: 'networkidle'});
     await page.getByText('Upload').click();
 
     const buffer = Buffer.from('hello, world!', 'utf-8');
@@ -154,11 +153,9 @@ test('upload file, upload overwrite and upload rename', async ({ page }) => {
       buffer
     });
     await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
-    await expect(page.getByTestId(name)).toBeVisible(); // Added back
+    await expect(page.getByTestId(name)).toBeVisible();
 
-    // Verify with Supabase
-    await supabaseStorageService.checkFileExistence(user.id, name, true);
-
+    await storageService.service.checkFileExistence(page, path, name, true);
 
     await page.getByText('Upload').nth(0).click();
     await page.setInputFiles('input[type="file"]', {
@@ -168,11 +165,9 @@ test('upload file, upload overwrite and upload rename', async ({ page }) => {
     });
     await page.getByRole('button', { name: 'Overwrite' }).click();
     await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
-    await expect(page.getByTestId(name)).toBeVisible(); // Added back
+    await expect(page.getByTestId(name)).toBeVisible();
 
-    // Verify overwrite with Supabase by calling storageService.checkFileExistence directly
-    await supabaseStorageService.checkFileExistence(user.id, name, true);
-
+    await storageService.service.checkFileExistence(page, path, name, true);
 
     await page.getByText('Upload').nth(0).click();
     await page.setInputFiles('input[type="file"]', {
@@ -185,8 +180,8 @@ test('upload file, upload overwrite and upload rename', async ({ page }) => {
     await page.locator('input[type="text"]').fill(renamedName);
     await page.getByRole('heading', { name: 'Upload files' }).click();
     await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
-    await expect(page.getByTestId(renamedName)).toBeVisible(); // Added back
+    await expect(page.getByTestId(renamedName)).toBeVisible();
 
-    // Verify rename with Supabase by calling storageService.checkFileExistence directly
-    await supabaseStorageService.checkFileExistence(user.id, renamedName, true);
+    await storageService.service.checkFileExistence(page, path, renamedName, true);
+});
 });

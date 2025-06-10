@@ -26,14 +26,15 @@ export class SupabaseStorageService implements StorageService {
 
     async checkFileExistence(page: Page, folderPath: string, fileName: string, expected: boolean): Promise<void> {
         const { data, error } = await supabase_full_access.storage.from('folders').list(folderPath);
+        console.log(data);
         if (error) {
             throw new Error(`Supabase checkFileExistence error: ${error.message}`);
         }
         const fileExists = data?.some(file => file.name === fileName);
         if (expected) {
-            expect(fileExists).toBe(true);
+            expect(fileExists, `Expected file '${fileName}' to exist in folder '${folderPath}', but it was not found. Available files: ${data?.map(f => f.name).join(', ') || 'none'}`).toBe(true);
         } else {
-            expect(fileExists).toBe(false);
+            expect(fileExists, `Expected file '${fileName}' to NOT exist in folder '${folderPath}', but it was found. Available files: ${data?.map(f => f.name).join(', ') || 'none'}`).toBe(false);
         }
     }
 }
