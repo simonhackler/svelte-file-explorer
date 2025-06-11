@@ -14,7 +14,10 @@ interface BuildFolder {
 
 type BuildNode = BuildFolder | { name: string, fileData: FileData };
 
-function buildTree(filePathList: InputPath[],) {
+// Building a tree structure from a list of paths, especially for supabase
+// It is done in 2 phases, first a tree structure is built with a map for fast access and then afterwards converted to a children array
+// This might be an unnecessary micro optimization.
+function buildTree(filePathList: InputPath[]) {
     const root: BuildFolder = { name: 'home', children: new Map<string, BuildNode>() };
     for (const { pathTokens, fileData } of filePathList) {
         subBuild(root, pathTokens, fileData);
@@ -65,6 +68,13 @@ function prettyPrintTreeArray(node: ExplorerNode, prefix = ''): void {
     });
 }
 
+export function buildFileTree(
+    filePathList: InputPath[]
+) {
+    const tree = buildTree(filePathList);
+    return convertToArray(tree, null) as Folder;
+}
+
 export async function getAllFilesAndConvertToTree(
     supabase: SupabaseClient<Database>
 ) {
@@ -93,8 +103,8 @@ export async function getAllFilesAndConvertToTree(
                 updatedAt: new Date(row.updatedAt)
             }
         }));
-    const buildRoot = buildTree(filePathList);
 
+    const buildRoot = buildTree(filePathList);
     return { data: convertToArray(buildRoot, null) as Folder, error: null };
 }
 
@@ -102,12 +112,13 @@ function base64Size(b64: string) {
     return Math.ceil((b64.length * 3) / 4);
 }
 
-export function buildTreeFromLocalStorage(prefix: string): Folder {
+export async function buildTreeFromLocalStorage(prefix: string) {
     const filePathList: {
         pathTokens: string[];
-        fileData: { size: number; mimetype: string; updatedAt: Date };
+        fileData: FileData;
     }[] = [];
 
+    console.log("parsing localstorage");
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)!;
         if (!key.startsWith(prefix)) continue;
@@ -117,6 +128,8 @@ export function buildTreeFromLocalStorage(prefix: string): Folder {
         let size = 0;
         let mimetype = 'application/octet-stream';
         let updatedAt = new Date(0);
+        let blob: Blob | undefined = undefined;
+        let url: Promise<string> | undefined = undefined;
 
         try {
             const obj = JSON.parse(stored);
@@ -125,6 +138,8 @@ export function buildTreeFromLocalStorage(prefix: string): Folder {
                 size = obj.size ?? base64Size(dataURL.split(',')[1] ?? '');
                 mimetype = obj.mimetype ?? mimetype;
                 updatedAt = new Date(obj.updatedAt ?? Date.now());
+                blob = await (await fetch(dataURL)).blob();
+                url = Promise.resolve(URL.createObjectURL(blob));
             } else {
                 dataURL = stored;
                 size = base64Size(dataURL.split(',')[1] ?? '');
@@ -137,10 +152,8 @@ export function buildTreeFromLocalStorage(prefix: string): Folder {
         const rel = key.slice(prefix.length); // strip namespace
         const pathTokens = rel.split('/');
 
-        filePathList.push({ pathTokens, fileData: { size, mimetype, updatedAt } });
-        console.log(key)
+        filePathList.push({ pathTokens, fileData: { size, mimetype, updatedAt, url, blob } });
     }
 
-    const buildRoot = buildTree(filePathList);
-    return convertToArray(buildRoot, null) as Folder;
+    return buildFileTree(filePathList);
 }

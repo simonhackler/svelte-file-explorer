@@ -25,3 +25,19 @@ export async function createUser(email: string, password: string = 'password') {
     }
     return data.user;
 }
+
+export async function getBucketFiles(bucketId: string, folder: string) {
+    const { data, error } = await supabase_full_access
+        .schema('storage')
+        .from('objects')
+        .select(`pathTokens: path_tokens
+            `)
+        .eq('bucket_id', bucketId)
+        .filter('path_tokens->>0', 'eq', folder);
+    
+    if (error) {
+        throw new Error(error.message);
+    }
+    
+    return data.map(file => file.pathTokens?.slice(1).join('/') || '');
+}

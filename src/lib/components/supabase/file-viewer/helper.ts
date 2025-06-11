@@ -1,9 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../../schema";
-import type { Folder } from "./types.svelte";
 
-export async function getAllFilesAndConvertToTree(
-    supabase: SupabaseClient<Database>
+// This will get all the files out of a bucket the user has rls access on
+export async function getAllFilesMetadata(
+    supabase: SupabaseClient<Database>,
+    bucketId: string
 ) {
     const { data, error } = await supabase
         .schema('storage')
@@ -13,7 +14,7 @@ export async function getAllFilesAndConvertToTree(
             mimetype: metadata->>mimetype,
             updatedAt: metadata->>updated_at
             `)
-        .eq('bucket_id', 'folders');
+        .eq('bucket_id', bucketId);
 
     if (error) {
         console.error(error);
@@ -31,6 +32,5 @@ export async function getAllFilesAndConvertToTree(
             }
         }));
 
-    const buildRoot = buildTree(filePathList);
-    return { data: convertToArray(buildRoot, null) as Folder, error: null };
-}
+    return { data: filePathList, error: null };
+

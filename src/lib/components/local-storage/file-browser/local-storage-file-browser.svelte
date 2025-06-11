@@ -32,8 +32,8 @@
 		});
 	}
 
-	onMount(() => {
-		tree = buildTreeFromLocalStorage(homePath);
+	onMount(async () => {
+		tree = await buildTreeFromLocalStorage(homePath);
 		currentFolder = tree;
 	});
 
@@ -55,15 +55,23 @@
 		return out;
 	}
 
-	async function upload(file: File, folderPath: string, overwrite = false) {
+	async function upload(file: File, folderPath: string, overwrite = false): Promise<null | Error> {
 		const key = keyFor(`${homePath}/${folderPath}${file.name}`);
-		console.log('uploading to ' + key);
-		if (!overwrite && localStorage.getItem(key)) return new Error(`File exists: ${key}`);
+		if (!overwrite && localStorage.getItem(key)) {
+			return new Error(`File exists: ${key}`);
+		}
 
 		const dataURL = await fileToDataURL(file);
-		localStorage.setItem(key, dataURL);
 
-		currentFolder = tree;
+		const payload = {
+			dataURL,
+			size: file.size,
+			mimetype: file.type || 'application/octet-stream',
+			updatedAt: Date.now()
+		};
+
+		localStorage.setItem(key, JSON.stringify(payload));
+
 		return null;
 	}
 

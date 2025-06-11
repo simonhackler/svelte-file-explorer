@@ -116,7 +116,7 @@ test(`${storageService.name} test move files`, async ({ page }) => {
     await expect(page.getByTestId('README.md')).not.toBeVisible();
 
     await storageService.service.checkFileExistence(page, path, 'README.md', false);
-    await storageService.service.checkFileExistence(page, `${path}/downloads`, 'README.md', true);
+    await storageService.service.checkFileExistence(page, path, 'downloads/README.md', true);
 });
 
 test(`${storageService.name} test copy files`, async ({ page }) => {
@@ -134,7 +134,7 @@ test(`${storageService.name} test copy files`, async ({ page }) => {
     await expect(page.getByTestId('README.md')).toBeVisible(); 
 
     await storageService.service.checkFileExistence(page, path, 'README.md', true);
-    await storageService.service.checkFileExistence(page, `${path}/downloads`, 'README.md', true);
+    await storageService.service.checkFileExistence(page, path, 'downloads/README.md', true);
 });
 
 test(`${storageService.name} upload file, upload overwrite and upload rename`, async ({ page }) => {

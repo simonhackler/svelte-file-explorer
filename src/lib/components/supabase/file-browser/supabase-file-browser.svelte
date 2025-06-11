@@ -6,10 +6,10 @@
 		Folder,
 		isFolder
 	} from '$lib/components/supabase/file-viewer/types.svelte';
-	import { getAllFilesAndConvertToTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
-
+	import { buildFileTree } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
 	import FileBrowser from '$lib/components/supabase/file-browser/file-browser.svelte';
 	import type SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
+	import { getAllFilesMetadata } from '../file-viewer/helper';
 
 	let { supabase, user}: {supabase: SupabaseClient, user: User } = $props();
 
@@ -27,11 +27,11 @@
 	}
 
 	onMount(async () => {
-		const { data, error } = await getAllFilesAndConvertToTree(supabase);
+		const { data, error } = await getAllFilesMetadata(supabase, 'folders');
 		if (error) {
 			console.error(error);
 		} else {
-			tree = data;
+			tree = buildFileTree(data);
 			currentFolder = tree;
 		}
 	});

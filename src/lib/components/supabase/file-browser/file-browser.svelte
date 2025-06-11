@@ -79,8 +79,7 @@
 			new FileLeaf(
 				file.name,
 				currentFolder,
-				{ mimetype: file.type, size: file.size, updatedAt: new Date(file.lastModified) },
-				file
+				{ mimetype: file.type, size: file.size, updatedAt: new Date(file.lastModified), blob: file },
 			)
 		];
 

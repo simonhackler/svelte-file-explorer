@@ -3,6 +3,7 @@ export interface FileData {
     mimetype: string;
     updatedAt: Date;
     url?: Promise<string>;
+    blob?: Blob;
 }
 
 export abstract class ExplorerNodeBase {
@@ -17,11 +18,13 @@ export abstract class ExplorerNodeBase {
 
 export class FileLeaf extends ExplorerNodeBase {
     fileData = $state<FileData | undefined>(undefined);
-    blob: Blob | null = null;
-    constructor(name: string, parent: Folder | null = null, fileData?: FileData, blob: Blob | null= null) {
+    constructor(name: string, parent: Folder | null = null, fileData?: FileData) {
         super(name, parent);
         this.fileData = fileData;
-        this.blob = blob
+        console.log(this.fileData);
+        if (this.fileData?.blob && this.fileData?.mimetype.startsWith('image')) {
+            this.fileData.url = Promise.resolve(URL.createObjectURL(this.fileData.blob));
+        }
     }
 }
 
@@ -46,37 +49,37 @@ export function isFolder(node: ExplorerNode): node is Folder {
 }
 
 export function deepCopyExplorerNode(
-  node: ExplorerNode,
-  parent: Folder | null = null
+    node: ExplorerNode,
+    parent: Folder | null = null
 ): ExplorerNode {
-  if (isFolder(node)) {
-    const copyFolder = new Folder(node.name, parent);
+    if (isFolder(node)) {
+        const copyFolder = new Folder(node.name, parent);
 
-    const newChildren: ExplorerNode[] = [];
-    for (const child of node.children) {
-      const childCopy = deepCopyExplorerNode(child, copyFolder);
-      newChildren.push(childCopy);
+        const newChildren: ExplorerNode[] = [];
+        for (const child of node.children) {
+            const childCopy = deepCopyExplorerNode(child, copyFolder);
+            newChildren.push(childCopy);
+        }
+
+        copyFolder.children = newChildren;
+
+        return copyFolder;
     }
 
-    copyFolder.children = newChildren;
+    else {
+        const originalData = node.fileData;
+        let fileDataCopy: FileData | undefined = undefined;
 
-    return copyFolder;
-  }
+        if (originalData) {
+            fileDataCopy = {
+                size: originalData.size,
+                mimetype: originalData.mimetype,
+                updatedAt: new Date(originalData.updatedAt.getTime()),
+                url: originalData.url
+            };
+        }
 
-  else {
-    const originalData = node.fileData;
-    let fileDataCopy: FileData | undefined = undefined;
-
-    if (originalData) {
-      fileDataCopy = {
-        size: originalData.size,
-        mimetype: originalData.mimetype,
-        updatedAt: new Date(originalData.updatedAt.getTime()),
-        url: originalData.url
-      };
+        const copyFile = new FileLeaf(node.name, parent, fileDataCopy);
+        return copyFile;
     }
-
-    const copyFile = new FileLeaf(node.name, parent, fileDataCopy);
-    return copyFile;
-  }
 }

@@ -25,8 +25,7 @@ export class LocalStorageService implements StorageService {
         fileContent?: Blob | File | FormData | ArrayBuffer | ReadableStream | Buffer | string
     ): Promise<{ path: string } | null | undefined> {
         
-        const storageKey = this.keyFor(filePath);
-        console.log(`Uploading file to localStorage with key: ${storageKey}`);
+        const storageKey = filePath;
         
         let dataURL = 'data:text/plain;base64,';
         if (typeof fileContent === 'string') {
