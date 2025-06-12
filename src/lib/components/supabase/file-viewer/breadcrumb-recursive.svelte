@@ -25,6 +25,6 @@
 	<Breadcrumb.Separator />
 {:else}
 	<Breadcrumb.Item>
-		<Button variant="ghost" class="text-black" onclick={() => onBreadCrumbClick(folder)}>{folder.name}</Button>
+		<Button variant="ghost" onclick={() => onBreadCrumbClick(folder)}>{folder.name}</Button>
 	</Breadcrumb.Item>
 {/if}

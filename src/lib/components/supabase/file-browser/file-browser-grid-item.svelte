@@ -23,7 +23,7 @@
 	} & WithElementRef<HTMLButtonAttributes> = $props();
 </script>
 
-<Button class="h-full w-full" variant="ghost" data-testid={child.name} {...restProps}>
+<Button class="h-full w-full relative" variant="ghost" data-testid={child.name} {...restProps}>
 	<div class="flex h-full w-full flex-col items-center justify-center gap-4">
         {#if checkbox}
             {@render checkbox()}

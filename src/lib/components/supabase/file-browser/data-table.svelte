@@ -12,7 +12,8 @@
 		getSortedRowModel,
 		getFilteredRowModel,
 		type SortingState,
-		type VisibilityState
+		type VisibilityState,
+        type RowSelectionState
 	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -23,6 +24,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { Folders, Download, FolderOutput, Trash2 } from '@lucide/svelte';
 
 	interface FileFunctions {
 		deleteNodes: (nodes: ExplorerNode[]) => Promise<Error | null>;
@@ -194,34 +196,19 @@
 		</div>
 		{#if table.getFilteredSelectedRowModel().rows.length > 0 && fileFunctions}
 			<div class="flex items-center gap-2">
-				<Button
-					onclick={() =>
-						executeFileFunction(
-							table.getFilteredSelectedRowModel().rows.map((r) => r.original),
-							fileFunctions.deleteNodes
-						)}>Delete</Button
-				>
-				<Button
-					onclick={() =>
-						executeFileFunction(
-							table.getFilteredSelectedRowModel().rows.map((r) => r.original),
-							fileFunctions.moveNodes
-						)}>Move</Button
-				>
-				<Button
-					onclick={() =>
-						executeFileFunction(
-							table.getFilteredSelectedRowModel().rows.map((r) => r.original),
-							fileFunctions.copyNodes
-						)}>Copy</Button
-				>
-				<Button
-					onclick={() =>
-						executeFileFunction(
-							table.getFilteredSelectedRowModel().rows.map((r) => r.original),
-							fileFunctions.downloadNodes
-						)}>Download</Button
-				>
+				{#snippet functionButton(fileFunction, text, Icon)}
+					<Button
+						onclick={() =>
+							executeFileFunction(
+								table.getFilteredSelectedRowModel().rows.map((r) => r.original),
+								fileFunction
+							)}><Icon />{text}</Button
+					>
+				{/snippet}
+				{@render functionButton(fileFunctions.deleteNodes, 'Delete', Trash2)}
+				{@render functionButton(fileFunctions.moveNodes, 'Move', FolderOutput)}
+				{@render functionButton(fileFunctions.copyNodes, 'Copy', Folders)}
+				{@render functionButton(fileFunctions.downloadNodes, 'Download', Download)}
 			</div>
 		{/if}
 	</div>
@@ -281,6 +268,7 @@
 						>
 							{#snippet checkbox()}
 								<Checkbox
+									class="absolute top-2 right-2"
 									checked={row.getIsSelected()}
 									onCheckedChange={(value) => row.toggleSelected(!!value)}
 									onclick={blockClick}

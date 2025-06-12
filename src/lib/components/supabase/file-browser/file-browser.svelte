@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { downloadZip } from 'client-zip';
-	import { Button } from '$lib/components/ui/button';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Plus } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
 	import {
 		deepCopyExplorerNode,
 		type ExplorerNode,
@@ -18,6 +19,7 @@
 	import { cn } from '$lib/utils/utils';
 	import FileUpload from './file-upload.svelte';
 	import MoveCopyDialog from './move-copy-dialog.svelte';
+	import { Input } from '$lib/components/ui/input';
 
 	interface FileFunctions {
 		onDelete: (files: string[]) => Promise<Error | null>;
@@ -41,7 +43,6 @@
 		showActions?: boolean;
 	} = $props();
 
-	let showCreateFolder = $state(false);
 	let display: 'grid' | 'list' = $state('grid');
 	let createFolderInput: HTMLInputElement | null = $state(null);
 
@@ -77,23 +78,31 @@
 		}
 		currentFolder.children = [
 			...currentFolder.children.filter((f) => f.name !== file.name),
-			new FileLeaf(
-				file.name,
-				currentFolder,
-				{ mimetype: file.type, size: file.size, updatedAt: new Date(file.lastModified), blob: file },
-			)
+			new FileLeaf(file.name, currentFolder, {
+				mimetype: file.type,
+				size: file.size,
+				updatedAt: new Date(file.lastModified),
+				blob: file
+			})
 		];
 
 		return null;
 	}
 
-	function createFolder(inputEvent: Event) {
-		showCreateFolder = false;
+	const regex = /^(?!\s)(?!.*\s$)[A-Za-z0-9 ]+$/;
+	let showCreateInput = $state(false);
+
+	function createFolder() {
 		const newFolderName = createFolderInput!.value;
 		if (newFolderName === '') {
 			return;
 		}
-		currentFolder.children.push(new Folder(newFolderName, currentFolder, []));
+		const valid = regex.test(newFolderName);
+		if (!valid) {
+			return;
+		}
+        currentFolder.children = [...currentFolder.children, new Folder(newFolderName, currentFolder, [])];
+        showCreateInput = false;
 	}
 
 	function getAllFiles(node: ExplorerNode, currentPath: string): string[] {
@@ -108,12 +117,6 @@
 			return [currentPath];
 		}
 	}
-
-	$effect(() => {
-		if (showCreateFolder) {
-			createFolderInput?.focus();
-		}
-	});
 
 	async function deleteNodes(nodes: ExplorerNode[]) {
 		const allFilesToDelete: string[] = [];
@@ -130,7 +133,7 @@
 			return error;
 		} else {
 			// Remove all deleted nodes from their parents
-			const nodeNames = new Set(nodes.map(n => n.name));
+			const nodeNames = new Set(nodes.map((n) => n.name));
 			for (const node of nodes) {
 				if (node.parent) {
 					node.parent.children = node.parent.children.filter((f) => !nodeNames.has(f.name));
@@ -163,7 +166,7 @@
 		} else {
 			blob = await downloadZip(
 				files.map((f) => {
-                    console.log(f.data);
+					console.log(f.data);
 					return { name: f.path, input: f.data };
 				})
 			).blob();
@@ -181,7 +184,7 @@
 	}
 
 	async function moveNodes(nodes: ExplorerNode[], newParent: Folder) {
-		const moveOperations = nodes.map(node => ({
+		const moveOperations = nodes.map((node) => ({
 			filePath: homeFolderPath + getPath(node).slice(1).join('/'),
 			path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + node.name
 		}));
@@ -220,7 +223,10 @@
 
 			let name = originalName;
 			let i = 1;
-			while (newParent.children.find((f) => f.name === name) || newNodes.find((n) => n.name === name)) {
+			while (
+				newParent.children.find((f) => f.name === name) ||
+				newNodes.find((n) => n.name === name)
+			) {
 				name = `${baseName}_copy_${i}${extension}`;
 				i++;
 			}
@@ -253,31 +259,31 @@
 		return await downloadNodes([node]);
 	}
 
-    const fileFunctionsNode = {
-        deleteNodes: deleteNodes,
-        downloadNodes: downloadNodes,
-        moveNodes: setActionMove,
-        copyNodes: setActionCopy
-    }
+	const fileFunctionsNode = {
+		deleteNodes: deleteNodes,
+		downloadNodes: downloadNodes,
+		moveNodes: setActionMove,
+		copyNodes: setActionCopy
+	};
 
-	let currentAction : 'copy' | 'move' = $state('copy');
+	let currentAction: 'copy' | 'move' = $state('copy');
 	let openMoveCopy = $state(false);
-    let selectedNodes = $state<ExplorerNode[]>([]);
+	let selectedNodes = $state<ExplorerNode[]>([]);
 
 	function setActionCopy(nodes: ExplorerNode[]) {
 		currentAction = 'copy';
-        openMoveCopyDialog(nodes);
+		openMoveCopyDialog(nodes);
 	}
 
 	function setActionMove(nodes: ExplorerNode[]) {
 		currentAction = 'move';
-        openMoveCopyDialog(nodes);
+		openMoveCopyDialog(nodes);
 	}
 
-    function openMoveCopyDialog(nodes: ExplorerNode[]) {
-        selectedNodes = nodes;
-        openMoveCopy = true;
-    }
+	function openMoveCopyDialog(nodes: ExplorerNode[]) {
+		selectedNodes = nodes;
+		openMoveCopy = true;
+	}
 
 	async function handleCurrentAction(nodes: ExplorerNode[], currentFolder: Folder) {
 		let error = null;
@@ -292,12 +298,11 @@
 			openMoveCopy = false;
 		}
 	}
-
 </script>
 
 <div class={cn('flex flex-col', className)}>
 	<div
-		class="mx-4 mb-4 flex flex-0 items-center justify-between rounded border border-gray-300 bg-gray-100 p-4"
+		class="border-border bg-background mx-4 mb-4 flex flex-0 items-center justify-between rounded border p-4"
 	>
 		<Breadcrumb.Root>
 			<Breadcrumb.List>
@@ -306,12 +311,6 @@
 					isLast={true}
 					onBreadCrumbClick={(folder) => setCurrentFolder(folder)}
 				/>
-				<Breadcrumb.Separator />
-				<Breadcrumb.Item>
-					<Button onclick={() => (showCreateFolder = true)} variant="outline"
-						><Plus class="mr-2" />folder</Button
-					>
-				</Breadcrumb.Item>
 			</Breadcrumb.List>
 		</Breadcrumb.Root>
 		<div class="flex gap-2">
@@ -319,9 +318,17 @@
 				uploadToAdapter={onUpload}
 				filesInFolder={currentFolder.children.map((f) => f.name)}
 			/>
-			<Button onclick={() => (showCreateFolder = true)} variant="outline"
-				><Plus class="mr-2" />Create folder</Button
-			>
+			<Popover.Root bind:open={showCreateInput}>
+				<Popover.Trigger>
+					<Button variant="outline"><Plus />Folder</Button>
+				</Popover.Trigger>
+				<Popover.Content>
+					<div class="flex flex-col gap-2">
+						<Input placeholder="Folder name" bind:ref={createFolderInput}></Input>
+						<Button onclick={() => createFolder()}>Create</Button>
+					</div>
+				</Popover.Content>
+			</Popover.Root>
 			<Button variant="outline" onclick={() => (display = display === 'grid' ? 'list' : 'grid')}>
 				{#if display === 'list'}
 					<Grid2x2 />
@@ -338,18 +345,23 @@
 		{display}
 		class="mx-4 min-h-0 flex-1"
 		{showActions}
-        fileFunctions={fileFunctionsNode}
+		fileFunctions={fileFunctionsNode}
 	>
 		{#snippet actionList(node: ExplorerNode)}
 			<FileBrowserActions
 				{node}
 				onDelete={deleteNode}
-				onMove={node => setActionMove([node])}
-				onCopy={node => setActionCopy([node])}
+				onMove={(node) => setActionMove([node])}
+				onCopy={(node) => setActionCopy([node])}
 				onDownload={downloadNode}
 			/>
 		{/snippet}
 	</DataTable>
 </div>
 
-<MoveCopyDialog bind:open={openMoveCopy} {handleCurrentAction} {currentAction} nodes={selectedNodes} />
+<MoveCopyDialog
+	bind:open={openMoveCopy}
+	{handleCurrentAction}
+	{currentAction}
+	nodes={selectedNodes}
+/>

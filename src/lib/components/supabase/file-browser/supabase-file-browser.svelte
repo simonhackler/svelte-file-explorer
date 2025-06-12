@@ -86,7 +86,6 @@
 	async function moveFilesInSupabase(files: { filePath: string; path: string }[]) {
         const results = await Promise.all(
             files.map(async (file) => {
-                console.log("movinng file " + file.filePath + " to " + file.path);
                return supabase.storage.from('folders').move(file.filePath, file.path);
             })
         );
