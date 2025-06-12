@@ -33,4 +33,4 @@ export async function getAllFilesMetadata(
         }));
 
     return { data: filePathList, error: null };
-
+}

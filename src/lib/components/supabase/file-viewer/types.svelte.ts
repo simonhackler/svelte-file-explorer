@@ -21,7 +21,6 @@ export class FileLeaf extends ExplorerNodeBase {
     constructor(name: string, parent: Folder | null = null, fileData?: FileData) {
         super(name, parent);
         this.fileData = fileData;
-        console.log(this.fileData);
         if (this.fileData?.blob && this.fileData?.mimetype.startsWith('image')) {
             this.fileData.url = Promise.resolve(URL.createObjectURL(this.fileData.blob));
         }

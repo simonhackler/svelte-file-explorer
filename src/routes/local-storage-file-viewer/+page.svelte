@@ -23,17 +23,6 @@
 		}
 		return path.reverse();
 	}
-
-	onMount(async () => {
-		// const { data, error } = await getAllFilesAndConvertToTree();
-		// if (error) {
-		// 	console.error(error);
-		// } else {
-		// 	tree = data;
-		// 	currentFolder = tree;
-		// }
-	});
-
 </script>
 
 <LocalStorageFileBrowser />

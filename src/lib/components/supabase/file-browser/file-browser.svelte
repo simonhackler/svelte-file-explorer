@@ -17,6 +17,7 @@
 	import FileBrowserActions from './file-browser-actions.svelte';
 	import { cn } from '$lib/utils/utils';
 	import FileUpload from './file-upload.svelte';
+	import MoveCopyDialog from './move-copy-dialog.svelte';
 
 	interface FileFunctions {
 		onDelete: (files: string[]) => Promise<Error | null>;
@@ -114,97 +115,184 @@
 		}
 	});
 
-	async function deleteNode(node: ExplorerNode) {
-		const path = homeFolderPath + getPath(node).slice(1).join('/');
-		const toDelete = getAllFiles(node, path);
+	async function deleteNodes(nodes: ExplorerNode[]) {
+		const allFilesToDelete: string[] = [];
 
-		const error = await fileFunctions?.onDelete(toDelete);
+		for (const node of nodes) {
+			const path = homeFolderPath + getPath(node).slice(1).join('/');
+			const filePaths = getAllFiles(node, path);
+			allFilesToDelete.push(...filePaths);
+		}
+
+		const error = await fileFunctions?.onDelete(allFilesToDelete);
 		if (error) {
 			console.error(error);
+			return error;
 		} else {
-			currentFolder.children = currentFolder.children.filter((f) => f.name !== node.name);
+			// Remove all deleted nodes from their parents
+			const nodeNames = new Set(nodes.map(n => n.name));
+			for (const node of nodes) {
+				if (node.parent) {
+					node.parent.children = node.parent.children.filter((f) => !nodeNames.has(f.name));
+				}
+			}
 		}
+		return null;
 	}
 
-	async function downloadNode(node: ExplorerNode) {
-		const files = await fileFunctions?.download(
-			getAllFiles(node, homeFolderPath + getPath(node).slice(1).join('/'))
-		);
+	async function downloadNodes(nodes: ExplorerNode[]) {
+		const allFilesToDownload: string[] = [];
+
+		for (const node of nodes) {
+			const filePaths = getAllFiles(node, homeFolderPath + getPath(node).slice(1).join('/'));
+			allFilesToDownload.push(...filePaths);
+		}
+
+		const files = await fileFunctions?.download(allFilesToDownload);
 		if (files == undefined || files instanceof Error) {
 			console.error(files);
 			return;
 		}
+
 		let blob: Blob;
-		if (files.length === 1) {
+		let downloadName: string;
+
+		if (files.length === 1 && nodes.length === 1) {
 			blob = files[0].data;
+			downloadName = nodes[0].name;
 		} else {
 			blob = await downloadZip(
 				files.map((f) => {
-					return { name: f.path, data: f.data, lastModified: new Date() };
+                    console.log(f.data);
+					return { name: f.path, input: f.data };
 				})
 			).blob();
+			downloadName = nodes.length === 1 ? nodes[0].name + '.zip' : 'files.zip';
 		}
+
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.style.display = 'none';
 		a.href = url;
-		a.download = node.name;
+		a.download = downloadName;
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
 	}
 
-	async function moveNode(node: ExplorerNode, newParent: Folder) {
-		const error = await fileFunctions?.move([
-			{
-				filePath: homeFolderPath + getPath(node).slice(1).join('/'),
-				path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + node.name
-			}
-		]);
+	async function moveNodes(nodes: ExplorerNode[], newParent: Folder) {
+		const moveOperations = nodes.map(node => ({
+			filePath: homeFolderPath + getPath(node).slice(1).join('/'),
+			path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + node.name
+		}));
+
+		const error = await fileFunctions?.move(moveOperations);
 		if (error) {
 			console.error(error);
 			return error;
 		}
-		// Have to update like this for state changes. Maybe there is a better way aka derived in the table
-		// So always have children as derived state
-		node.parent!.children = node.parent!.children.filter((f) => f.name !== node.name);
-		newParent.children = [...newParent.children, node];
-		node.parent = newParent;
+
+		// Update the file tree structure
+		for (const node of nodes) {
+			if (node.parent) {
+				node.parent.children = node.parent.children.filter((f) => f.name !== node.name);
+			}
+			node.parent = newParent;
+		}
+		newParent.children = [...newParent.children, ...nodes];
 		return null;
 	}
 
-	async function copyNode(node: ExplorerNode, newParent: Folder) {
-		const originalName = node.name;
+	async function copyNodes(nodes: ExplorerNode[], newParent: Folder) {
+		const copyOperations: { filePath: string; path: string }[] = [];
+		const newNodes: ExplorerNode[] = [];
 
-		let baseName = originalName;
-		let extension = '';
-		const dotIndex = originalName.lastIndexOf('.');
-		if (dotIndex !== -1) {
-			baseName = originalName.substring(0, dotIndex);
-			extension = originalName.substring(dotIndex); // includes the “.”
-		}
+		for (const node of nodes) {
+			const originalName = node.name;
 
-		let name = originalName;
-		let i = 1;
-		while (newParent.children.find((f) => f.name === name)) {
-			name = `${baseName}_copy_${i}${extension}`;
-			i++;
-		}
-		const error = await fileFunctions?.copy([
-			{
+			let baseName = originalName;
+			let extension = '';
+			const dotIndex = originalName.lastIndexOf('.');
+			if (dotIndex !== -1) {
+				baseName = originalName.substring(0, dotIndex);
+				extension = originalName.substring(dotIndex); // includes the "."
+			}
+
+			let name = originalName;
+			let i = 1;
+			while (newParent.children.find((f) => f.name === name) || newNodes.find((n) => n.name === name)) {
+				name = `${baseName}_copy_${i}${extension}`;
+				i++;
+			}
+
+			copyOperations.push({
 				filePath: homeFolderPath + getPath(node).slice(1).join('/'),
 				path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + name
-			}
-		]);
-        if (error) {
-            console.error(error);
-            return error;
-        }
-		const newNode = deepCopyExplorerNode(node, newParent);
-		newNode.name = name;
-		newParent.children = [...newParent.children, newNode];
+			});
+
+			const newNode = deepCopyExplorerNode(node, newParent);
+			newNode.name = name;
+			newNodes.push(newNode);
+		}
+
+		const error = await fileFunctions?.copy(copyOperations);
+		if (error) {
+			console.error(error);
+			return error;
+		}
+
+		newParent.children = [...newParent.children, ...newNodes];
 		return null;
 	}
+
+	async function deleteNode(node: ExplorerNode) {
+		return await deleteNodes([node]);
+	}
+
+	async function downloadNode(node: ExplorerNode) {
+		return await downloadNodes([node]);
+	}
+
+    const fileFunctionsNode = {
+        deleteNodes: deleteNodes,
+        downloadNodes: downloadNodes,
+        moveNodes: setActionMove,
+        copyNodes: setActionCopy
+    }
+
+	let currentAction : 'copy' | 'move' = $state('copy');
+	let openMoveCopy = $state(false);
+    let selectedNodes = $state<ExplorerNode[]>([]);
+
+	function setActionCopy(nodes: ExplorerNode[]) {
+		currentAction = 'copy';
+        openMoveCopyDialog(nodes);
+	}
+
+	function setActionMove(nodes: ExplorerNode[]) {
+		currentAction = 'move';
+        openMoveCopyDialog(nodes);
+	}
+
+    function openMoveCopyDialog(nodes: ExplorerNode[]) {
+        selectedNodes = nodes;
+        openMoveCopy = true;
+    }
+
+	async function handleCurrentAction(nodes: ExplorerNode[], currentFolder: Folder) {
+		let error = null;
+		if (currentAction === 'copy') {
+			error = await copyNodes(nodes, currentFolder);
+		} else if (currentAction === 'move') {
+			error = await moveNodes(nodes, currentFolder);
+		}
+		if (error) {
+			console.error(error);
+		} else {
+			openMoveCopy = false;
+		}
+	}
+
 </script>
 
 <div class={cn('flex flex-col', className)}>
@@ -227,7 +315,6 @@
 			</Breadcrumb.List>
 		</Breadcrumb.Root>
 		<div class="flex gap-2">
-			<!-- <Button variant="outline">Upload</Button> -->
 			<FileUpload
 				uploadToAdapter={onUpload}
 				filesInFolder={currentFolder.children.map((f) => f.name)}
@@ -251,15 +338,18 @@
 		{display}
 		class="mx-4 min-h-0 flex-1"
 		{showActions}
+        fileFunctions={fileFunctionsNode}
 	>
 		{#snippet actionList(node: ExplorerNode)}
 			<FileBrowserActions
 				{node}
 				onDelete={deleteNode}
-				onMove={moveNode}
-				onCopy={copyNode}
+				onMove={node => setActionMove([node])}
+				onCopy={node => setActionCopy([node])}
 				onDownload={downloadNode}
 			/>
 		{/snippet}
 	</DataTable>
 </div>
+
+<MoveCopyDialog bind:open={openMoveCopy} {handleCurrentAction} {currentAction} nodes={selectedNodes} />

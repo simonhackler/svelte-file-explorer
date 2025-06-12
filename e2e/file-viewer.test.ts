@@ -74,7 +74,7 @@ async function createFolderStructure(page: Page, storageService: StorageService,
 }
 
 async function pressMenuItem(page: Page, fileName: string, itemName: string) {
-    await page.getByTestId(fileName).locator('button').click();
+    await page.getByTestId(fileName).locator('button').nth(1).click();
     await page.getByRole('menuitem', { name: itemName }).click();
 }
 
@@ -109,6 +109,7 @@ test(`${storageService.name} test move files`, async ({ page }) => {
     await pressMenuItem(page, 'README.md', 'Move');
     await page.getByTestId('downloads').nth(1).click();
     await page.getByRole('button', { name: 'move README.md to downloads' }).click();
+    await page.waitForTimeout(100); //Has to be removed when async is handled properly
     
     await page.getByTestId('downloads').nth(0).click(); 
     await expect(page.getByTestId('README.md')).toBeVisible();

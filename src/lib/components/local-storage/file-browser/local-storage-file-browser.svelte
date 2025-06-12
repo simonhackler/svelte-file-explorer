@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { buildTreeFromLocalStorage } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
+	import { buildTreeFromLocalStorage, parseStoredFileData } from '$lib/components/supabase/file-viewer/getFileTree.svelte';
 	import type { ExplorerNode } from '$lib/components/supabase/file-viewer/types.svelte';
 	import { Folder, isFolder } from '$lib/components/supabase/file-viewer/types.svelte';
 	import FileBrowser from '$lib/components/supabase/file-browser/file-browser.svelte';
 
 	let { homePath = '/home' }: { homePath?: string } = $props();
 
-	// ------- reactive state -------
 	let tree = $state<Folder>(new Folder('home', null, []));
 	let currentFolder = $state<Folder>(tree);
 
@@ -49,8 +48,9 @@
 		for (const p of paths) {
 			const dataURL = localStorage.getItem(keyFor(p));
 			if (!dataURL) continue;
-			const blob = await fetch(dataURL).then((r) => r.blob());
-			out.push({ path: p, data: blob });
+            const fileData = await parseStoredFileData(dataURL);
+            const file = new File([fileData.blob!], p, { type: fileData.mimetype });
+			out.push({ path: p, data: file });
 		}
 		return out;
 	}
@@ -82,16 +82,13 @@
 
 	async function move(files: { filePath: string; path: string }[]) {
 		for (const file of files) {
-			// Get the source file data
 			const sourceKey = keyFor(file.filePath);
 			const dataURL = localStorage.getItem(sourceKey);
 			if (!dataURL) continue;
 
-			// Save to destination
 			const destKey = keyFor(file.path);
 			localStorage.setItem(destKey, dataURL);
 
-			// Remove from source
 			localStorage.removeItem(sourceKey);
 		}
 
@@ -100,12 +97,10 @@
 
 	async function copy(files: { filePath: string; path: string }[]) {
 		for (const file of files) {
-			// Get the source file data
 			const sourceKey = keyFor(file.filePath);
 			const dataURL = localStorage.getItem(sourceKey);
 			if (!dataURL) continue;
 
-			// Save to destination
 			const destKey = keyFor(file.path);
 			localStorage.setItem(destKey, dataURL);
 		}
@@ -113,10 +108,6 @@
 		return null;
 	}
 
-	// optional helpers (no‑ops for simple demo)
-	const noop = async () => null;
-
-	// ------- previews for images -------
 	$effect(() => {
 		for (const c of currentFolder.children) {
 			if (!isFolder(c) && c.fileData?.mimetype.startsWith('image/') && !c.fileData.url) {
@@ -125,7 +116,6 @@
 		}
 	});
 
-	// ------- contract handed to <FileBrowser> -------
 	const fileFunctions = {
 		onDelete: remove,
 		download: downloadFiles,

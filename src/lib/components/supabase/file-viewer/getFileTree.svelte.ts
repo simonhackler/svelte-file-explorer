@@ -112,6 +112,36 @@ function base64Size(b64: string) {
     return Math.ceil((b64.length * 3) / 4);
 }
 
+export async function parseStoredFileData(stored: string) {
+    let dataURL: string;
+    let size = 0;
+    let mimetype = 'application/octet-stream';
+    let updatedAt = new Date(0);
+    let blob: Blob | undefined = undefined;
+    let url: Promise<string> | undefined = undefined;
+
+    try {
+        const obj = JSON.parse(stored);
+        if (obj?.dataURL) {
+            dataURL = obj.dataURL;
+            size = obj.size ?? base64Size(dataURL.split(',')[1] ?? '');
+            mimetype = obj.mimetype ?? mimetype;
+            updatedAt = new Date(obj.updatedAt ?? Date.now());
+            blob = await (await fetch(dataURL)).blob();
+            url = Promise.resolve(URL.createObjectURL(blob));
+        } else {
+            dataURL = stored;
+            size = base64Size(dataURL.split(',')[1] ?? '');
+        }
+    } catch (_e) {
+        console.error(_e);
+        dataURL = stored;
+        size = base64Size(dataURL.split(',')[1] ?? '');
+    }
+
+    return { dataURL, size, mimetype, updatedAt, blob, url };
+}
+
 export async function buildTreeFromLocalStorage(prefix: string) {
     const filePathList: {
         pathTokens: string[];
@@ -124,30 +154,7 @@ export async function buildTreeFromLocalStorage(prefix: string) {
         if (!key.startsWith(prefix)) continue;
 
         const stored = localStorage.getItem(key)!;
-        let dataURL: string;
-        let size = 0;
-        let mimetype = 'application/octet-stream';
-        let updatedAt = new Date(0);
-        let blob: Blob | undefined = undefined;
-        let url: Promise<string> | undefined = undefined;
-
-        try {
-            const obj = JSON.parse(stored);
-            if (obj?.dataURL) {
-                dataURL = obj.dataURL;
-                size = obj.size ?? base64Size(dataURL.split(',')[1] ?? '');
-                mimetype = obj.mimetype ?? mimetype;
-                updatedAt = new Date(obj.updatedAt ?? Date.now());
-                blob = await (await fetch(dataURL)).blob();
-                url = Promise.resolve(URL.createObjectURL(blob));
-            } else {
-                dataURL = stored;
-                size = base64Size(dataURL.split(',')[1] ?? '');
-            }
-        } catch (_e) {
-            dataURL = stored;
-            size = base64Size(dataURL.split(',')[1] ?? '');
-        }
+        const { dataURL, size, mimetype, updatedAt, url, blob } = await parseStoredFileData(stored);
 
         const rel = key.slice(prefix.length); // strip namespace
         const pathTokens = rel.split('/');
