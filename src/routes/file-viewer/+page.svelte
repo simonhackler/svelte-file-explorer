@@ -1,69 +1,23 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
 	import { Toaster, toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import type { User } from '@supabase/supabase-js';
-	import {
-		type ExplorerNode,
-		Folder,
-		isFolder
-	} from '$lib/components/file-browser/utils/types.svelte';
-	import { getAllFilesAndConvertToTree } from '$lib/components/file-browser/utils/getFileTree.svelte';
 
-	import SupabaseFileBrowser from '$lib/components/file-browser/ui/supabase-file-browser.svelte';
+	import AdapterFileBrowser from '$lib/components/file-browser/ui/adapter-file-browser.svelte';
+	import { SupabaseAdapter } from '$lib/components/file-browser/adapters/supabase/supabase-adapter';
 
 	let { data }: { data: PageData } = $props();
 
 	const supabase = $derived(data.supabase);
 	const user = $derived(data.user as User);
-	let tree = $state<Folder>(new Folder('home', null, []));
-	let currentFolder = $state<Folder>(tree);
-
-	function getPath(node: ExplorerNode): string[] {
-		let path = [node.name];
-		let parent = node.parent;
-		while (parent !== null) {
-			path.push(parent.name);
-			parent = parent.parent;
-		}
-		return path.reverse();
-	}
-
-	onMount(async () => {
-		const { data, error } = await getAllFilesAndConvertToTree(supabase);
-		if (error) {
-			console.error(error);
-		} else {
-			tree = data;
-			currentFolder = tree;
-		}
-	});
-
-	async function downloadFile(path: string) {
-		const { data, error } = await supabase.storage.from('folders').download(`${path}`);
-		if (error) {
-			console.error(error);
-			return '';
-		}
-		return URL.createObjectURL(data);
-	}
-
-
-	$effect(() => {
-		for (let child of currentFolder.children) {
-			if (
-				!isFolder(child) &&
-				child?.fileData &&
-				child.fileData.mimetype.startsWith('image/') &&
-				child.fileData.url == undefined
-			) {
-				child.fileData.url = downloadFile(user.id + '/' + getPath(child).slice(1).join('/'));
-			}
-		}
-	});
-
+	const supabaseAdapter = new SupabaseAdapter(supabase, user.id);
 </script>
 
-<SupabaseFileBrowser {supabase} {user} />
+<AdapterFileBrowser
+	adapter={supabaseAdapter}
+	homeFolderPath={user.id + '/'}
+	pathPrefix={user.id + '/'}
+	class=""
+/>
 
 <Toaster />

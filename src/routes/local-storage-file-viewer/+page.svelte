@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { Toaster } from 'svelte-sonner';
-	import LocalStorageFileBrowser from '$lib/components/local-storage/file-browser/local-storage-file-browser.svelte';
+	import AdapterFileBrowser from '$lib/components/file-browser/ui/adapter-file-browser.svelte';
+	import { LocalStorageAdapter } from '$lib/components/file-browser/adapters/local-storage/local-storage-adapter';
 
+    const homePath = '/home';
+	const localStorageAdapter = new LocalStorageAdapter(homePath);
 </script>
 
-<LocalStorageFileBrowser />
+<AdapterFileBrowser
+	adapter={localStorageAdapter}
+	homeFolderPath={homePath + '/'}
+	class=""
+/>
 
 <Toaster />

@@ -37,7 +37,7 @@ export class Folder extends ExplorerNodeBase {
         children: ExplorerNode[] = []
     ) {
         super(name, parent);
-        this.children = children;                 // keep this reactive too
+        this.children = children;                 
     }
 }
 

@@ -11,9 +11,7 @@
 	import { XIcon } from '@lucide/svelte';
 	import { onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { SvelteDate } from 'svelte/reactivity';
 	import { Input } from '$lib/components/ui/input';
-	import type { Attachment } from 'svelte/attachments';
 
 	interface Props {
 		uploadToAdapter: (file: File, overwrite?: boolean) => Promise<Error | null>;
@@ -72,10 +70,6 @@
 
 	let open = $state(false);
 
-	const focusElement: Attachment = (inputElement: HTMLInputElement) => {
-		inputElement.focus();
-	};
-
 	function onBlurRename(file: UploadedFile) {
 		file.rename = false;
 		if (!filesInFolder.includes(file.name)) {
@@ -123,7 +117,6 @@
 											type="text"
 											bind:value={file.name}
 											autofocus
-											{@attach focusElement}
 											onblur={() => onBlurRename(file)}
 											onkeydown={(e) => e.key === 'Enter' && onBlurRename(file)}
 										/>
