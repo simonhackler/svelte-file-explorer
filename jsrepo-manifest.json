@@ -12,7 +12,7 @@
 					"tests": false,
 					"docs": false,
 					"subdirectory": false,
-					"list": true,
+					"list": false,
 					"files": [
 						"utils.ts"
 					],
@@ -129,7 +129,7 @@
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
-					"list": false,
+					"list": true,
 					"files": [
 						"explorer-node-functions.ts",
 						"file-tree.svelte.ts",

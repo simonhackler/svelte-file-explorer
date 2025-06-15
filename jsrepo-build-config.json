@@ -9,7 +9,7 @@
 	],
 	"doNotListBlocks": [],
 	"doNotListCategories": [],
-	"listBlocks": ["adapters", "browser-ui", "utils"],
+	"listBlocks": ["adapters", "browser-ui", "browser-utils"],
 	"listCategories": [],
 	"excludeDeps": [],
 	"includeBlocks": [],
