@@ -2,6 +2,7 @@
 	"name": "svelte-supabase-ui",
 	"private": true,
 	"version": "0.0.1",
+	"license": "MIT",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -16,7 +17,8 @@
 		"test": "npm run test:e2e",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"reset-and-gen-types": "supabase db reset && supabase gen types typescript --local > ./src/schema.ts"
+		"reset-and-gen-types": "supabase db reset && supabase gen types typescript --local > ./src/schema.ts",
+		"release:registry": "jsrepo publish"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3",
@@ -47,6 +49,7 @@
 		"eslint-plugin-svelte": "^3.0.0",
 		"formsnap": "^2.0.1",
 		"globals": "^16.0.0",
+		"jsrepo": "^2.4.0",
 		"playwright": "^1.52.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",

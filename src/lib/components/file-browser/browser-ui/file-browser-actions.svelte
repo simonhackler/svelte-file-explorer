@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Ellipsis, Trash2, Folders, FolderOutput, Download } from '@lucide/svelte';
-	import { isFolder, type ExplorerNode, type Folder } from '../utils/types.svelte';
+	import { isFolder, type ExplorerNode, type Folder } from '../browser-utils/types.svelte';
 
 	let {
 		node,

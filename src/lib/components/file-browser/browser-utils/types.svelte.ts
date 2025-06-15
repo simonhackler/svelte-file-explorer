@@ -1,3 +1,11 @@
+export interface FileFunctions {
+    delete: (files: string[]) => Promise<Error | null>;
+    download: (files: string[]) => Promise<{result: { path: string; data: Blob } | null; error: Error | null}[]>;
+    upload: (file: File, fullFolderPath: string, overwrite?: boolean) => Promise<Error | null>;
+    move: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
+    copy: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
+}
+
 export interface FileData {
     size: number;
     mimetype: string;
@@ -37,7 +45,7 @@ export class Folder extends ExplorerNodeBase {
         children: ExplorerNode[] = []
     ) {
         super(name, parent);
-        this.children = children;                 
+        this.children = children;
     }
 }
 
@@ -82,3 +90,5 @@ export function deepCopyExplorerNode(
         return copyFile;
     }
 }
+
+

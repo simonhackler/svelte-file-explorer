@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import type { FileLeaf, ExplorerNode, Folder } from '../utils/types.svelte';
+	import type { FileLeaf, ExplorerNode, Folder } from '../browser-utils/types.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import BreadcrumbRecursive from '$lib/components/file-browser/ui/breadcrumb-recursive.svelte';
+	import BreadcrumbRecursive from '$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte';
 
 	interface Props {
 		folder: Folder;

@@ -1,9 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../../../../../schema";
 
 // This will get all the files out of a bucket the user has rls access on
 export async function getAllFilesMetadata(
-    supabase: SupabaseClient<Database>,
+    supabase: SupabaseClient,
     bucketId: string
 ) {
     const { data, error } = await supabase

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { FolderIcon, FileIcon } from '@lucide/svelte';
-	import { isFolder, type ExplorerNode } from '$lib/components/file-browser/utils/types.svelte';
+	import { isFolder, type ExplorerNode } from '$lib/components/file-browser/browser-utils/types.svelte';
 
 	let { node }: { node: ExplorerNode } = $props();
 </script>

@@ -1,0 +1,441 @@
+{
+	"name": "@simonhackler/svelte-shadcn-file-browser",
+	"version": "0.0.1",
+	"categories": [
+		{
+			"name": "utils",
+			"blocks": [
+				{
+					"name": "utils",
+					"directory": "src/lib/utils",
+					"category": "utils",
+					"tests": false,
+					"docs": false,
+					"subdirectory": false,
+					"list": true,
+					"files": [
+						"utils.ts"
+					],
+					"localDependencies": [],
+					"_imports_": {},
+					"dependencies": [],
+					"devDependencies": [
+						"clsx@^2.1.1",
+						"tailwind-merge@^3.3.0"
+					]
+				}
+			]
+		},
+		{
+			"name": "file-browser",
+			"blocks": [
+				{
+					"name": "adapters",
+					"directory": "src/lib/components/file-browser/adapters",
+					"category": "file-browser",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"adapter.ts",
+						"local-storage/local-storage-adapter.ts",
+						"supabase/helper.ts",
+						"supabase/supabase-adapter.ts"
+					],
+					"localDependencies": [
+						"file-browser/utils"
+					],
+					"dependencies": [
+						"@supabase/supabase-js@^2.49.8"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../utils/types.svelte": "{{file-browser/utils}}/types.svelte",
+						"../../utils/getFileTree.svelte": "{{file-browser/utils}}/getFileTree.svelte"
+					}
+				},
+				{
+					"name": "browser-ui",
+					"directory": "src/lib/components/file-browser/browser-ui",
+					"category": "file-browser",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"adapter-file-browser.svelte",
+						"breadcrumb-recursive.svelte",
+						"data-table-name-button.svelte",
+						"data-table.svelte",
+						"file-browser-actions.svelte",
+						"file-browser-grid-item.svelte",
+						"file-browser-item-icon.svelte",
+						"file-browser.svelte",
+						"file-upload.svelte",
+						"move-copy-dialog.svelte"
+					],
+					"localDependencies": [
+						"file-browser/utils",
+						"file-browser/adapters",
+						"ui/button",
+						"ui/breadcrumb",
+						"ui/data-table",
+						"ui/scroll-area",
+						"ui/file-drop-zone",
+						"ui/table",
+						"utils/utils",
+						"ui/input",
+						"ui/checkbox",
+						"ui/dropdown-menu",
+						"ui/popover",
+						"ui/dialog"
+					],
+					"dependencies": [
+						"client-zip@^2.5.0",
+						"svelte-sonner@^1.0.3"
+					],
+					"devDependencies": [
+						"@lucide/svelte@^0.513.0",
+						"@tanstack/table-core@^8.21.3",
+						"bits-ui@^2.5.0"
+					],
+					"_imports_": {
+						"$lib/components/file-browser/utils/types.svelte": "{{file-browser/utils}}/types.svelte",
+						"$lib/components/file-browser/adapters/adapter": "{{file-browser/adapters}}/adapter",
+						"$lib/components/ui/button": "{{ui/button}}",
+						"../utils/types.svelte": "{{file-browser/utils}}/types.svelte",
+						"$lib/components/ui/breadcrumb/index.js": "{{ui/breadcrumb}}/index.js",
+						"$lib/components/ui/button/index.js": "{{ui/button}}/index.js",
+						"$lib/components/ui/data-table": "{{ui/data-table}}",
+						"$lib/components/ui/scroll-area/index.js": "{{ui/scroll-area}}/index.js",
+						"$lib/components/ui/file-drop-zone": "{{ui/file-drop-zone}}",
+						"$lib/components/ui/data-table/index.js": "{{ui/data-table}}/index.js",
+						"$lib/components/ui/table/index.js": "{{ui/table}}/index.js",
+						"$lib/utils/utils": "{{utils/utils}}",
+						"$lib/components/ui/input/index.js": "{{ui/input}}/index.js",
+						"$lib/components/ui/checkbox": "{{ui/checkbox}}",
+						"$lib/components/ui/button/button.svelte": "{{ui/button}}/button.svelte",
+						"$lib/components/ui/dropdown-menu/index.js": "{{ui/dropdown-menu}}/index.js",
+						"$lib/components/ui/popover/index.js": "{{ui/popover}}/index.js",
+						"$lib/components/ui/input": "{{ui/input}}",
+						"../utils/explorer-node-functions": "{{file-browser/utils}}/explorer-node-functions",
+						"$lib/components/ui/dialog/index.js": "{{ui/dialog}}/index.js"
+					}
+				},
+				{
+					"name": "utils",
+					"directory": "src/lib/components/file-browser/utils",
+					"category": "file-browser",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"explorer-node-functions.ts",
+						"getFileTree.svelte.ts",
+						"types.svelte.ts"
+					],
+					"localDependencies": [],
+					"dependencies": [
+						"client-zip@^2.5.0",
+						"@supabase/supabase-js@^2.49.8"
+					],
+					"devDependencies": [],
+					"_imports_": {}
+				}
+			]
+		},
+		{
+			"name": "ui",
+			"blocks": [
+				{
+					"name": "breadcrumb",
+					"directory": "src/lib/components/ui/breadcrumb",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"breadcrumb-ellipsis.svelte",
+						"breadcrumb-item.svelte",
+						"breadcrumb-link.svelte",
+						"breadcrumb-list.svelte",
+						"breadcrumb-page.svelte",
+						"breadcrumb-separator.svelte",
+						"breadcrumb.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"@lucide/svelte@^0.513.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "button",
+					"directory": "src/lib/components/ui/button",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"button.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"tailwind-variants@^1.0.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "checkbox",
+					"directory": "src/lib/components/ui/checkbox",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"checkbox.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"bits-ui@^2.5.0",
+						"@lucide/svelte@^0.513.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "data-table",
+					"directory": "src/lib/components/ui/data-table",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"data-table.svelte.ts",
+						"flex-render.svelte",
+						"index.ts",
+						"render-helpers.ts"
+					],
+					"localDependencies": [],
+					"dependencies": [],
+					"devDependencies": [
+						"@tanstack/table-core@^8.21.3",
+						"svelte@^5.0.0"
+					],
+					"_imports_": {}
+				},
+				{
+					"name": "dialog",
+					"directory": "src/lib/components/ui/dialog",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"dialog-close.svelte",
+						"dialog-content.svelte",
+						"dialog-description.svelte",
+						"dialog-footer.svelte",
+						"dialog-header.svelte",
+						"dialog-overlay.svelte",
+						"dialog-title.svelte",
+						"dialog-trigger.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"bits-ui@^2.5.0",
+						"@lucide/svelte@^0.513.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "dropdown-menu",
+					"directory": "src/lib/components/ui/dropdown-menu",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"dropdown-menu-checkbox-item.svelte",
+						"dropdown-menu-content.svelte",
+						"dropdown-menu-group-heading.svelte",
+						"dropdown-menu-group.svelte",
+						"dropdown-menu-item.svelte",
+						"dropdown-menu-label.svelte",
+						"dropdown-menu-radio-group.svelte",
+						"dropdown-menu-radio-item.svelte",
+						"dropdown-menu-separator.svelte",
+						"dropdown-menu-shortcut.svelte",
+						"dropdown-menu-sub-content.svelte",
+						"dropdown-menu-sub-trigger.svelte",
+						"dropdown-menu-trigger.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"bits-ui@^2.5.0",
+						"@lucide/svelte@^0.513.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "file-drop-zone",
+					"directory": "src/lib/components/ui/file-drop-zone",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"file-drop-zone.svelte",
+						"index.ts"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"@lucide/svelte@^0.513.0",
+						"bits-ui@^2.5.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils": "{{utils/utils}}"
+					}
+				},
+				{
+					"name": "input",
+					"directory": "src/lib/components/ui/input",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"index.ts",
+						"input.svelte"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "popover",
+					"directory": "src/lib/components/ui/popover",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"index.ts",
+						"popover-content.svelte",
+						"popover-trigger.svelte"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"bits-ui@^2.5.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "scroll-area",
+					"directory": "src/lib/components/ui/scroll-area",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"index.ts",
+						"scroll-area-scrollbar.svelte",
+						"scroll-area.svelte"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [
+						"bits-ui@^2.5.0"
+					],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				},
+				{
+					"name": "table",
+					"directory": "src/lib/components/ui/table",
+					"category": "ui",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": false,
+					"files": [
+						"index.ts",
+						"table-body.svelte",
+						"table-caption.svelte",
+						"table-cell.svelte",
+						"table-footer.svelte",
+						"table-head.svelte",
+						"table-header.svelte",
+						"table-row.svelte",
+						"table.svelte"
+					],
+					"localDependencies": [
+						"utils/utils"
+					],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {
+						"$lib/utils/utils.js": "{{utils/utils}}.js"
+					}
+				}
+			]
+		}
+	]
+}
