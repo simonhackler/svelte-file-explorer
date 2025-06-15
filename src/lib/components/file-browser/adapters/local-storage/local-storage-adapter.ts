@@ -1,5 +1,5 @@
 import type { Adapter } from "../adapter";
-import { buildTreeFromLocalStorage, parseStoredFileData } from "../../utils/getFileTree.svelte";
+import { buildTreeFromLocalStorage, parseStoredFileData } from "../../browser-utils/file-tree.svelte";
 
 export class LocalStorageAdapter implements Adapter {
     private homePath: string;

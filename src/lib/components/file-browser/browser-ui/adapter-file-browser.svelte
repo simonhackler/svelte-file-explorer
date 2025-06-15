@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { ExplorerNode } from '$lib/components/file-browser/utils/types.svelte';
-	import { Folder, isFolder } from '$lib/components/file-browser/utils/types.svelte';
+	import type { ExplorerNode } from '$lib/components/file-browser/browser-utils/types.svelte';
+	import { Folder, isFolder } from '$lib/components/file-browser/browser-utils/types.svelte';
 	import FileBrowser from '$lib/components/file-browser/browser-ui/file-browser.svelte';
 	import type { Adapter } from '$lib/components/file-browser/adapters/adapter';
 

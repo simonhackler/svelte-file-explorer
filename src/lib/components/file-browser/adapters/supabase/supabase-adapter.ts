@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Adapter } from "../adapter";
-import { buildFileTree } from "../../utils/getFileTree.svelte";
+import { buildFileTree } from "../../browser-utils/file-tree.svelte";
 import { getAllFilesMetadata } from "./helper";
 
 export class SupabaseAdapter implements Adapter {

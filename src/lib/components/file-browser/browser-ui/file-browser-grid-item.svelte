@@ -3,7 +3,7 @@
 	import { Checkbox as CheckboxPrimitive } from "bits-ui";
 
 	import { displaySize } from '$lib/components/ui/file-drop-zone';
-	import { isFolder, type ExplorerNode } from '$lib/components/file-browser/utils/types.svelte';
+	import { isFolder, type ExplorerNode } from '$lib/components/file-browser/browser-utils/types.svelte';
 	import FileBrowserItemIcon from './file-browser-item-icon.svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import type { WithElementRef, WithoutChildrenOrChild } from '$lib/utils/utils';
