@@ -1,4 +1,6 @@
 {
+    "name": "@simonhackler/shadcn-svelte-file-explorer",
+	"version": "0.0.1",
 	"$schema": "https://unpkg.com/jsrepo@2.0.2/schemas/project-config.json",
 	"repos": ["@ieedan/shadcn-svelte-extras"],
 	"includeTests": false,
@@ -11,5 +13,12 @@
 			"hooks": "$lib/hooks",
 			"actions": "$lib/actions",
 			"utils": "$lib/utils"
-    }
+    },
+    "meta": {
+		"authors": ["Simon Hackler"],
+		"bugs": "https://github.com/simonhackler/svelte-file-explorer/issues",
+		"description": "Shadcn-svelte file explorer with automatic syncing to remote file storage",
+		"repository": "https://github.com/simonhackler/svelte-file-explorer",
+		"tags": ["shadcn-svelte", "file-explorer", "storage"]
+	}
 }
