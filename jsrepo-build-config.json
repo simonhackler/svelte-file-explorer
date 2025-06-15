@@ -1,0 +1,20 @@
+{
+	"$schema": "https://unpkg.com/jsrepo@2.4.0/schemas/registry-config.json",
+	"name": "@simonhackler/svelte-shadcn-file-browser",
+	"version": "0.0.1",
+	"readme": "README.md",
+	"dirs": [
+		"./src/lib"
+	],
+	"doNotListBlocks": [],
+	"doNotListCategories": [],
+	"listBlocks": ["file-browser"],
+	"listCategories": ["components"],
+	"excludeDeps": [],
+	"includeBlocks": [],
+	"includeCategories": [],
+	"excludeBlocks": [],
+	"excludeCategories": [],
+	"preview": false,
+	"includeDocs": false
+}

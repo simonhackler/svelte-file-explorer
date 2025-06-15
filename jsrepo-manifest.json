@@ -1,0 +1,25 @@
+{
+	"name": "@simonhackler/svelte-shadcn-file-browser",
+	"version": "0.0.1",
+	"categories": [
+		{
+			"name": "components",
+			"blocks": [
+				{
+					"name": "file-browser",
+					"directory": "src/lib/components/file-browser",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [],
+					"localDependencies": [],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {}
+				}
+			]
+		}
+	]
+}
