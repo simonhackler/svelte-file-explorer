@@ -33,7 +33,7 @@ jobs:
           supabase status -o env \
             --override-name api.url=PUBLIC_SUPABASE_URL \
             --override-name auth.anon_key=PUBLIC_SUPABASE_ANON_KEY \
-            --override-name auth.service_role_key=SUPABASE_SERVICE_KEY \
+            --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
             > .env
 
       - name: Run Playwright tests
