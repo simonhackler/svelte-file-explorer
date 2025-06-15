@@ -2,7 +2,7 @@
 
 > ⚠️ **Alpha**: This project is in alpha and may change unexpectedly.
 
-A shadcn-svelte file explorer. It handles common file operations and allows you to 
+A shadcn-svelte file explorer. It handles common file operations and allows you to
 sync your changes to a storage adapter of your choice.
 
 It is fully stylable with shadcn-svelte.
@@ -37,7 +37,7 @@ The demo uses local storage only so no files will be sent anywhere.
 ## Install
 
 1. Install shadcn-svelte https://shadcn-svelte.com/docs/installation
-2. initialize jsrepo 
+2. initialize jsrepo
 ```bash
 jsrepo init https://github.com/simonhackler/svelte-file-explorer
 ```
@@ -62,6 +62,7 @@ This repo uses components from
 
 
 https://github.com/ieedan/shadcn-svelte-extras
+
 https://github.com/huntabyte/shadcn-svelte
 
 ## License
