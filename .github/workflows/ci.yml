@@ -17,6 +17,22 @@ jobs:
       - name: Install Playwright Browsers
         run: bunx playwright install --with-deps
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: supabase start
+
+      - name: Dump Supabase env (with overridden key names)
+        run: |
+          supabase status -o env \
+            --override-name api.url=PUBLIC_SUPABASE_URL \
+            --override-name auth.anon_key=PUBLIC_SUPABASE_ANON_KEY \
+            --override-name auth.service_role_key=SUPABASE_SERVICE_KEY \
+            > .env
+
       - name: Build frontend
         run: bun run build
 
