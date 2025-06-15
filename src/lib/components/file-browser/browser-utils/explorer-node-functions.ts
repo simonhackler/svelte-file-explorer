@@ -2,7 +2,13 @@ import { downloadZip } from "client-zip";
 import { deepCopyExplorerNode, FileLeaf, isFolder, type ExplorerNode, type FileFunctions, type Folder } from "./types.svelte";
 
 export class ExplorerNodeFunctions {
-    constructor(private fileFunctions: FileFunctions, private homeFolderPath: string) {}
+    private fileFunctions: FileFunctions;
+    private homeFolderPath: string;
+
+    constructor(fileFunctions: FileFunctions, homeFolderPath: string) {
+        this.fileFunctions = fileFunctions;
+        this.homeFolderPath = homeFolderPath;
+    }
 
     private getPath(node: ExplorerNode): string[] {
         const path = [node.name];
@@ -51,7 +57,11 @@ export class ExplorerNodeFunctions {
     }
 
     public async deleteNodes(nodes: ExplorerNode[]) {
+        console.log(nodes);
+        console.log("home folder path: ");
+        console.log(this.homeFolderPath);
         const allFilesToDelete: string[] = [];
+
 
         for (const node of nodes) {
             const path = this.homeFolderPath + this.getPath(node).slice(1).join('/');

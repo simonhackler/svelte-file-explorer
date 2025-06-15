@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { downloadZip } from 'client-zip';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Plus } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
-		deepCopyExplorerNode,
 		type ExplorerNode,
 		type FileFunctions,
-		FileLeaf,
 		Folder,
 		isFolder
 	} from '$lib/components/file-browser/browser-utils/types.svelte';
@@ -84,8 +81,8 @@
 	}
 
 	const fileFunctionsNode = {
-		deleteNodes: explorerFunctions.deleteNodes,
-		downloadNodes: explorerFunctions.downloadNodes,
+		deleteNodes: explorerFunctions.deleteNodes.bind(explorerFunctions),
+		downloadNodes: explorerFunctions.downloadNodes.bind(explorerFunctions),
 		moveNodes: setActionMove,
 		copyNodes: setActionCopy
 	};
