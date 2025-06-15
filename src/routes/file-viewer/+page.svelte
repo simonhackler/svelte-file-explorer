@@ -15,9 +15,7 @@
 
 <AdapterFileBrowser
 	adapter={supabaseAdapter}
-	homeFolderPath={user.id + '/'}
 	pathPrefix={user.id + '/'}
-	class=""
 />
 
 <Toaster />

@@ -7,12 +7,10 @@
 
 	let { 
 		adapter, 
-		homeFolderPath,
 		pathPrefix = '',
 		class: className = ''
 	}: { 
 		adapter: Adapter;
-		homeFolderPath: string;
 		pathPrefix?: string;
 		class?: string;
 	} = $props();
@@ -71,4 +69,4 @@
 	});
 </script>
 
-<FileBrowser bind:currentFolder {homeFolderPath} fileFunctions={adapter} class={className} />
+<FileBrowser bind:currentFolder homeFolderPath={pathPrefix} fileFunctions={adapter} class={className} />

@@ -9,8 +9,7 @@
 
 <AdapterFileBrowser
 	adapter={localStorageAdapter}
-	homeFolderPath={homePath + '/'}
-	class=""
+	pathPrefix={homePath + '/'}
 />
 
 <Toaster />
