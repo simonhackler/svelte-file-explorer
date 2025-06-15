@@ -35,6 +35,8 @@ jobs:
             --override-name auth.anon_key=PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_KEY \
             > .env
+      - name: build and run
+        run: bun run build && bun run preview
 
       - name: Run Playwright tests
         run: bunx playwright test --config playwright.ci.config.ts
