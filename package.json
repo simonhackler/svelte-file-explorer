@@ -18,7 +18,8 @@
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
 		"reset-and-gen-types": "supabase db reset && supabase gen types typescript --local > ./src/schema.ts",
-		"release:registry": "jsrepo publish"
+		"release:registry": "jsrepo publish",
+        "build:registry": "jsrepo build"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3",
