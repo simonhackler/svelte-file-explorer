@@ -139,11 +139,15 @@
 		return null;
 	}
 
+	function getFullPath(node: ExplorerNode): string {
+		return homeFolderPath + getPath(node).slice(1).join('/');
+	}
+
 	async function downloadNodes(nodes: ExplorerNode[]) {
 		const allFilesToDownload: string[] = [];
 
 		for (const node of nodes) {
-			const filePaths = getAllFiles(node, homeFolderPath + getPath(node).slice(1).join('/'));
+			const filePaths = getAllFiles(node, getFullPath(node));
 			allFilesToDownload.push(...filePaths);
 		}
 
@@ -157,13 +161,21 @@
 		let downloadName: string;
 
 		if (files.length === 1 && nodes.length === 1) {
-			blob = files[0].data;
-			downloadName = nodes[0].name;
+			const file = files[0];
+			if (file.result) {
+				blob = file.result.data;
+				downloadName = nodes[0].name;
+			}
+			else {
+				throw new Error(`error when downloading file ${nodes[0].name}`)
+			}
 		} else {
 			blob = await downloadZip(
 				files.map((f) => {
-					console.log(f.data);
-					return { name: f.path, input: f.data };
+					if (f.result) {
+						return { name: f.result.path, input: f.result.data };
+					}
+					throw new Error(`error when downloading file`)
 				})
 			).blob();
 			downloadName = nodes.length === 1 ? nodes[0].name + '.zip' : 'files.zip';
@@ -181,8 +193,8 @@
 
 	async function moveNodes(nodes: ExplorerNode[], newParent: Folder) {
 		const moveOperations = nodes.map((node) => ({
-			filePath: homeFolderPath + getPath(node).slice(1).join('/'),
-			path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + node.name
+			filePath: getFullPath(node),
+			path: getFullPath(newParent) + '/' + node.name
 		}));
 
 		const error = await fileFunctions?.move(moveOperations);
@@ -191,7 +203,6 @@
 			return error;
 		}
 
-		// Update the file tree structure
 		for (const node of nodes) {
 			if (node.parent) {
 				node.parent.children = node.parent.children.filter((f) => f.name !== node.name);
@@ -228,8 +239,8 @@
 			}
 
 			copyOperations.push({
-				filePath: homeFolderPath + getPath(node).slice(1).join('/'),
-				path: homeFolderPath + getPath(newParent).slice(1).join('/') + '/' + name
+				filePath: getFullPath(node),
+				path: getFullPath(newParent) + '/' + name
 			});
 
 			const newNode = deepCopyExplorerNode(node, newParent);
