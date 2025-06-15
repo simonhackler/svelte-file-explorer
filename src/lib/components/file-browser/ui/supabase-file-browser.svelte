@@ -1,21 +1,19 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Toaster, toast } from 'svelte-sonner';
-	import type { PageData } from './$types';
 	import type { User } from '@supabase/supabase-js';
 	import {
 		type ExplorerNode,
 		Folder,
 		isFolder
 	} from '$lib/components/file-browser/utils/types.svelte';
-	import { getAllFilesAndConvertToTree } from '$lib/components/file-browser/utils/getFileTree.svelte';
+	import FileBrowser from '$lib/components/file-browser/ui/file-browser.svelte';
+	import type SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
+	import { SupabaseAdapter } from '../adapters/supabase/supabase-adapter';
 
-	import SupabaseFileBrowser from '$lib/components/file-browser/ui/supabase-file-browser.svelte';
+	let { supabase, user}: {supabase: SupabaseClient, user: User } = $props();
 
-	let { data }: { data: PageData } = $props();
+    const supabaseAdapter = new SupabaseAdapter(supabase, user.id);
 
-	const supabase = $derived(data.supabase);
-	const user = $derived(data.user as User);
 	let tree = $state<Folder>(new Folder('home', null, []));
 	let currentFolder = $state<Folder>(tree);
 
@@ -30,24 +28,25 @@
 	}
 
 	onMount(async () => {
-		const { data, error } = await getAllFilesAndConvertToTree(supabase);
+		const { result, error } = await supabaseAdapter.getFolder();
 		if (error) {
 			console.error(error);
 		} else {
-			tree = data;
+			tree = result!;
 			currentFolder = tree;
 		}
 	});
 
 	async function downloadFile(path: string) {
-		const { data, error } = await supabase.storage.from('folders').download(`${path}`);
+        const res = await supabaseAdapter.download([path]);
+
+		const { result, error } = res[0];
 		if (error) {
 			console.error(error);
 			return '';
 		}
-		return URL.createObjectURL(data);
+		return URL.createObjectURL(result.data);
 	}
-
 
 	$effect(() => {
 		for (let child of currentFolder.children) {
@@ -64,6 +63,4 @@
 
 </script>
 
-<SupabaseFileBrowser {supabase} {user} />
-
-<Toaster />
+<FileBrowser bind:currentFolder homeFolderPath={user.id + '/'} fileFunctions={supabaseAdapter} class="" />

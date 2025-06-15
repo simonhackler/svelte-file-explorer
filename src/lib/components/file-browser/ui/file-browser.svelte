@@ -9,10 +9,10 @@
 		FileLeaf,
 		Folder,
 		isFolder
-	} from '$lib/components/supabase/file-viewer/types.svelte';
+	} from '$lib/components/file-browser/utils/types.svelte';
 
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import BreadcrumbRecursive from '$lib/components/supabase/file-viewer/breadcrumb-recursive.svelte';
+	import BreadcrumbRecursive from '$lib/components/file-browser/ui/breadcrumb-recursive.svelte';
 	import DataTable from './data-table.svelte';
 	import { List, Grid2x2 } from '@lucide/svelte/icons';
 	import FileBrowserActions from './file-browser-actions.svelte';
@@ -20,14 +20,7 @@
 	import FileUpload from './file-upload.svelte';
 	import MoveCopyDialog from './move-copy-dialog.svelte';
 	import { Input } from '$lib/components/ui/input';
-
-	interface FileFunctions {
-		onDelete: (files: string[]) => Promise<Error | null>;
-		download: (files: string[]) => Promise<Error | { path: string; data: Blob }[]>;
-		upload: (file: File, fullFolderPath: string, overwrite?: boolean) => Promise<Error | null>;
-		move: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
-		copy: (files: { filePath: string; path: string }[]) => Promise<Error | null>;
-	}
+	import type { FileFunctions } from '../adapters/adapter';
 
 	let {
 		currentFolder = $bindable(),
@@ -101,8 +94,11 @@
 		if (!valid) {
 			return;
 		}
-        currentFolder.children = [...currentFolder.children, new Folder(newFolderName, currentFolder, [])];
-        showCreateInput = false;
+		currentFolder.children = [
+			...currentFolder.children,
+			new Folder(newFolderName, currentFolder, [])
+		];
+		showCreateInput = false;
 	}
 
 	function getAllFiles(node: ExplorerNode, currentPath: string): string[] {
@@ -127,7 +123,7 @@
 			allFilesToDelete.push(...filePaths);
 		}
 
-		const error = await fileFunctions?.onDelete(allFilesToDelete);
+		const error = await fileFunctions?.delete(allFilesToDelete);
 		if (error) {
 			console.error(error);
 			return error;

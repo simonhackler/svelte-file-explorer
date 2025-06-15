@@ -1,20 +1,20 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 
-	import { isFolder, type ExplorerNode, type Folder } from '../file-viewer/types.svelte';
+	import { isFolder, type ExplorerNode, type Folder } from '../utils/types.svelte';
 	import FileBrowser from './file-browser.svelte';
 	import { Button } from '$lib/components/ui/button';
 
 	let {
 		nodes,
-        open = $bindable(),
-        currentAction,
-        handleCurrentAction
+		open = $bindable(),
+		currentAction,
+		handleCurrentAction
 	}: {
 		nodes: ExplorerNode[];
-        open: boolean;
-        currentAction: 'copy' | 'move';
-        handleCurrentAction: (nodes: ExplorerNode[], currentFolder: Folder) => Promise<void>;
+		open: boolean;
+		currentAction: 'copy' | 'move';
+		handleCurrentAction: (nodes: ExplorerNode[], currentFolder: Folder) => Promise<void>;
 	} = $props();
 
 	let currentFolder = $derived(nodes.length > 0 ? nodes[0].parent! : null);

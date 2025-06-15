@@ -148,13 +148,12 @@ export async function buildTreeFromLocalStorage(prefix: string) {
         fileData: FileData;
     }[] = [];
 
-    console.log("parsing localstorage");
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)!;
         if (!key.startsWith(prefix)) continue;
 
         const stored = localStorage.getItem(key)!;
-        const { dataURL, size, mimetype, updatedAt, url, blob } = await parseStoredFileData(stored);
+        const { size, mimetype, updatedAt, url, blob } = await parseStoredFileData(stored);
 
         const rel = key.slice(prefix.length); // strip namespace
         const pathTokens = rel.split('/');
