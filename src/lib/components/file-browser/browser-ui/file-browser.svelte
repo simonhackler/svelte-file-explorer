@@ -34,7 +34,6 @@
 		showActions?: boolean;
 	} = $props();
 
-    $inspect(homeFolderPath);
 	const explorerFunctions = new ExplorerNodeFunctions(fileFunctions, homeFolderPath);
 
 	let display: 'grid' | 'list' = $state('grid');
