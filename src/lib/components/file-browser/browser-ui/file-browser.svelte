@@ -6,13 +6,14 @@
 	import {
 		deepCopyExplorerNode,
 		type ExplorerNode,
+		type FileFunctions,
 		FileLeaf,
 		Folder,
 		isFolder
 	} from '$lib/components/file-browser/utils/types.svelte';
 
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import BreadcrumbRecursive from '$lib/components/file-browser/ui/breadcrumb-recursive.svelte';
+	import BreadcrumbRecursive from '$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte';
 	import DataTable from './data-table.svelte';
 	import { List, Grid2x2 } from '@lucide/svelte/icons';
 	import FileBrowserActions from './file-browser-actions.svelte';
@@ -20,7 +21,6 @@
 	import FileUpload from './file-upload.svelte';
 	import MoveCopyDialog from './move-copy-dialog.svelte';
 	import { Input } from '$lib/components/ui/input';
-	import type { FileFunctions } from '../adapters/adapter';
 	import { ExplorerNodeFunctions } from '../utils/explorer-node-functions';
 
 	let {

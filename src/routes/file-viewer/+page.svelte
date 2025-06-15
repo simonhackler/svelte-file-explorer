@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import type { User } from '@supabase/supabase-js';
 
-	import AdapterFileBrowser from '$lib/components/file-browser/ui/adapter-file-browser.svelte';
+	import AdapterFileBrowser from '$lib/components/file-browser/browser-ui/adapter-file-browser.svelte';
 	import { SupabaseAdapter } from '$lib/components/file-browser/adapters/supabase/supabase-adapter';
 
 	let { data }: { data: PageData } = $props();

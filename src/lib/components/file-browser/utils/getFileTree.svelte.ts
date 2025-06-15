@@ -1,5 +1,4 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../../../schema';
 import { FileLeaf, Folder, type ExplorerNode, type FileData } from './types.svelte';
 
 interface InputPath {
@@ -76,7 +75,7 @@ export function buildFileTree(
 }
 
 export async function getAllFilesAndConvertToTree(
-    supabase: SupabaseClient<Database>
+    supabase: SupabaseClient
 ) {
     const { data, error } = await supabase
         .schema('storage')

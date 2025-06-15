@@ -1,6 +1,5 @@
 import { downloadZip } from "client-zip";
-import { deepCopyExplorerNode, FileLeaf, isFolder, type ExplorerNode, type Folder } from "./types.svelte";
-import type { FileFunctions } from "../adapters/adapter";
+import { deepCopyExplorerNode, FileLeaf, isFolder, type ExplorerNode, type FileFunctions, type Folder } from "./types.svelte";
 
 export class ExplorerNodeFunctions {
     constructor(private fileFunctions: FileFunctions, private homeFolderPath: string) {}

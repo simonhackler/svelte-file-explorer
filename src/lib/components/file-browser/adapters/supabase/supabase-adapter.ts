@@ -1,14 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../../../../../schema";
 import type { Adapter } from "../adapter";
 import { buildFileTree } from "../../utils/getFileTree.svelte";
 import { getAllFilesMetadata } from "./helper";
 
 export class SupabaseAdapter implements Adapter {
 
-    private supabase: SupabaseClient<Database>;
+    private supabase: SupabaseClient;
     private homePath: string;
-    constructor(supabase: SupabaseClient<Database>, homePath: string) {
+    constructor(supabase: SupabaseClient, homePath: string) {
         this.supabase = supabase;
         this.homePath = homePath;
     }
