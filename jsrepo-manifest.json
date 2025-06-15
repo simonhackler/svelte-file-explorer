@@ -44,15 +44,15 @@
 						"supabase/supabase-adapter.ts"
 					],
 					"localDependencies": [
-						"file-browser/utils"
+						"file-browser/browser-utils"
 					],
 					"dependencies": [
 						"@supabase/supabase-js@^2.49.8"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../utils/types.svelte": "{{file-browser/utils}}/types.svelte",
-						"../../utils/getFileTree.svelte": "{{file-browser/utils}}/getFileTree.svelte"
+						"../browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte",
+						"../../browser-utils/file-tree.svelte": "{{file-browser/browser-utils}}/file-tree.svelte"
 					}
 				},
 				{
@@ -76,7 +76,7 @@
 						"move-copy-dialog.svelte"
 					],
 					"localDependencies": [
-						"file-browser/utils",
+						"file-browser/browser-utils",
 						"file-browser/adapters",
 						"ui/button",
 						"ui/breadcrumb",
@@ -92,7 +92,6 @@
 						"ui/dialog"
 					],
 					"dependencies": [
-						"client-zip@^2.5.0",
 						"svelte-sonner@^1.0.3"
 					],
 					"devDependencies": [
@@ -101,10 +100,10 @@
 						"bits-ui@^2.5.0"
 					],
 					"_imports_": {
-						"$lib/components/file-browser/utils/types.svelte": "{{file-browser/utils}}/types.svelte",
+						"$lib/components/file-browser/browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte",
 						"$lib/components/file-browser/adapters/adapter": "{{file-browser/adapters}}/adapter",
 						"$lib/components/ui/button": "{{ui/button}}",
-						"../utils/types.svelte": "{{file-browser/utils}}/types.svelte",
+						"../browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte",
 						"$lib/components/ui/breadcrumb/index.js": "{{ui/breadcrumb}}/index.js",
 						"$lib/components/ui/button/index.js": "{{ui/button}}/index.js",
 						"$lib/components/ui/data-table": "{{ui/data-table}}",
@@ -119,21 +118,21 @@
 						"$lib/components/ui/dropdown-menu/index.js": "{{ui/dropdown-menu}}/index.js",
 						"$lib/components/ui/popover/index.js": "{{ui/popover}}/index.js",
 						"$lib/components/ui/input": "{{ui/input}}",
-						"../utils/explorer-node-functions": "{{file-browser/utils}}/explorer-node-functions",
+						"../browser-utils/explorer-node-functions": "{{file-browser/browser-utils}}/explorer-node-functions",
 						"$lib/components/ui/dialog/index.js": "{{ui/dialog}}/index.js"
 					}
 				},
 				{
-					"name": "utils",
-					"directory": "src/lib/components/file-browser/utils",
+					"name": "browser-utils",
+					"directory": "src/lib/components/file-browser/browser-utils",
 					"category": "file-browser",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
-					"list": true,
+					"list": false,
 					"files": [
 						"explorer-node-functions.ts",
-						"getFileTree.svelte.ts",
+						"file-tree.svelte.ts",
 						"types.svelte.ts"
 					],
 					"localDependencies": [],
