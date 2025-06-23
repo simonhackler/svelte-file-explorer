@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { FileLeaf, Folder, type ExplorerNode, type FileData } from './types.svelte';
 
-interface InputPath {
+export interface InputPath {
     pathTokens: string[];
     fileData: FileData;
 }

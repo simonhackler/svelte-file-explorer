@@ -2,9 +2,11 @@ import { expect, test } from '@playwright/test';
 import { StorageService, SupabaseStorageService } from './storage-service'; // Import the new service
 import type { Page } from '@playwright/test';
 import { LocalStorageService } from './local-storage-service';
+import { OPFSStorageService } from './opfs-storage-service';
 
 const supabaseStorageService = new SupabaseStorageService(); // Instantiate the service
 const localStorageFileService = new LocalStorageService('/home'); // Instantiate the service
+const opfsStorageService = new OPFSStorageService('/');
 
 async function createFolderStructure(page: Page, storageService: StorageService, userId: string) {
     const testFiles = [
@@ -79,7 +81,8 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
 
 [
     { service: supabaseStorageService, name: 'Supabase Storage Service' },
-    { service: localStorageFileService, name: 'Local Storage Service' }
+    { service: localStorageFileService, name: 'Local Storage Service' },
+    { service: opfsStorageService, name: 'Opfs storage service' }
 ].forEach(storageService => {
     test(`${storageService.name} test delete folder and files`, async ({ page }) => {
         const path = await storageService.service.beforeEach(page);
