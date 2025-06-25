@@ -34,9 +34,6 @@ export class OPFSAdapter implements Adapter {
         return dir;
     }
 
-    /**
-     * Splits a full file path into its parent folder and filename.
-     */
     private _splitPath(path: string): { parent: string; name: string } {
         const parts = path.split('/').filter(Boolean);
         const name = parts.pop()!;
