@@ -111,7 +111,6 @@ export class OPFSAdapter implements Adapter {
         files: { filePath: string; path: string }[]
     ): Promise<Error | null> {
         try {
-            // Copy then delete original
             await this.copy(files);
             for (const { filePath } of files) {
                 const { parent, name } = this._splitPath(filePath);
@@ -129,13 +128,10 @@ export class OPFSAdapter implements Adapter {
     async delete(paths: string[]): Promise<Error | null> {
         try {
             for (const path of paths) {
-                console.log("path: ", path);
                 const { parent, name } = this._splitPath(path);
-                console.log("parent: ", parent);
                 const dir = parent
                     ? await this._getDirectoryHandle(parent)
                     : this.root;
-                console.log("dir: ", dir);
                 await dir.removeEntry(name);
             }
             return null;
@@ -160,7 +156,7 @@ export class OPFSAdapter implements Adapter {
                     } else {
                         const file = await handle.getFile();
                         filePathList.push({
-                            // "home" must be the first token because buildTree() skips index 0
+                            // I don't really like this "home" stuff, build tree skips the root folder and create it's own root folder for the new tree
                             pathTokens: ['home', ...nextTokens],
                             fileData: {
                                 size: file.size,
