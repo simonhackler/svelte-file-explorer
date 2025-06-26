@@ -5,11 +5,11 @@
 	import FileBrowser from '$lib/components/file-browser/browser-ui/file-browser.svelte';
 	import type { Adapter } from '$lib/components/file-browser/adapters/adapter';
 
-	let { 
-		adapter, 
+	let {
+		adapter,
 		pathPrefix = '',
 		class: className = ''
-	}: { 
+	}: {
 		adapter: Adapter;
 		pathPrefix?: string;
 		class?: string;
@@ -33,7 +33,7 @@
 	}
 
 	onMount(async () => {
-		const { result, error } = await adapter.getFolder();
+		const { result, error } = await adapter.getRootFolder();
 		if (error) {
 			console.error(error);
 		} else if (result) {
