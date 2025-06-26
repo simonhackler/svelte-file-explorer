@@ -43,11 +43,11 @@ export class ExplorerNodeFunctions {
         return null;
     }
 
-    private getAllFiles(node: ExplorerNode, currentPath: string): string[] {
+    public static getAllFiles(node: ExplorerNode, currentPath: string): string[] {
         if (isFolder(node)) {
             const paths: string[] = [];
             for (const child of node.children) {
-                const childPaths = this.getAllFiles(child, currentPath + '/' + child.name);
+                const childPaths = ExplorerNodeFunctions.getAllFiles(child, currentPath + '/' + child.name);
                 paths.push(...childPaths);
             }
             return paths;
@@ -57,18 +57,12 @@ export class ExplorerNodeFunctions {
     }
 
     public async deleteNodes(nodes: ExplorerNode[]) {
-        console.log(nodes);
-        console.log("home folder path: ");
-        console.log(this.homeFolderPath);
         const allFilesToDelete: string[] = [];
-
-
         for (const node of nodes) {
             const path = this.homeFolderPath + ExplorerNodeFunctions.getPath(node).slice(1).join('/');
-            const filePaths = this.getAllFiles(node, path);
+            const filePaths = ExplorerNodeFunctions.getAllFiles(node, path);
             allFilesToDelete.push(...filePaths);
         }
-
         const error = await this.fileFunctions.delete(allFilesToDelete);
         if (error) {
             console.error(error);
@@ -92,7 +86,7 @@ export class ExplorerNodeFunctions {
         const allFilesToDownload: string[] = [];
 
         for (const node of nodes) {
-            const filePaths = this.getAllFiles(node, this.getFullPath(node));
+            const filePaths = ExplorerNodeFunctions.getAllFiles(node, this.getFullPath(node));
             allFilesToDownload.push(...filePaths);
         }
 
