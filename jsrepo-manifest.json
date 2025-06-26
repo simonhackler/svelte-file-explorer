@@ -40,6 +40,7 @@
 					"files": [
 						"adapter.ts",
 						"local-storage/local-storage-adapter.ts",
+						"opfs/opdfs-adapter.ts",
 						"supabase/helper.ts",
 						"supabase/supabase-adapter.ts"
 					],
@@ -52,7 +53,8 @@
 					"devDependencies": [],
 					"_imports_": {
 						"../browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte",
-						"../../browser-utils/file-tree.svelte": "{{file-browser/browser-utils}}/file-tree.svelte"
+						"../../browser-utils/file-tree.svelte": "{{file-browser/browser-utils}}/file-tree.svelte",
+						"../../browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte"
 					}
 				},
 				{
