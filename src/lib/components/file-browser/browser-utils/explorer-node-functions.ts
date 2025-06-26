@@ -10,7 +10,7 @@ export class ExplorerNodeFunctions {
         this.homeFolderPath = homeFolderPath;
     }
 
-    private getPath(node: ExplorerNode): string[] {
+    public static getPath(node: ExplorerNode): string[] {
         const path = [node.name];
         let parent = node.parent;
         while (parent !== null) {
@@ -23,7 +23,7 @@ export class ExplorerNodeFunctions {
     public async onUpload(file: File, uploadTo: Folder, overwrite?: boolean) {
         const error = await this.fileFunctions.upload(
             file,
-            this.getPath(uploadTo).slice(1).join('/'),
+            ExplorerNodeFunctions.getPath(uploadTo).slice(1).join('/'),
             overwrite
         );
         if (error) {
@@ -64,7 +64,7 @@ export class ExplorerNodeFunctions {
 
 
         for (const node of nodes) {
-            const path = this.homeFolderPath + this.getPath(node).slice(1).join('/');
+            const path = this.homeFolderPath + ExplorerNodeFunctions.getPath(node).slice(1).join('/');
             const filePaths = this.getAllFiles(node, path);
             allFilesToDelete.push(...filePaths);
         }
@@ -85,7 +85,7 @@ export class ExplorerNodeFunctions {
     }
 
     private getFullPath(node: ExplorerNode): string {
-        return this.homeFolderPath + this.getPath(node).slice(1).join('/');
+        return this.homeFolderPath + ExplorerNodeFunctions.getPath(node).slice(1).join('/');
     }
 
     public async downloadNodes(nodes: ExplorerNode[]) {

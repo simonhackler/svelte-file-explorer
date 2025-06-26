@@ -9,6 +9,7 @@ import type { Adapter } from "../adapter";
  */
 export class OPFSAdapter implements Adapter {
     private root: FileSystemDirectoryHandle;
+    private folder: Folder | null = null;
 
     public constructor(root: FileSystemDirectoryHandle) {
         this.root = root;
@@ -140,10 +141,12 @@ export class OPFSAdapter implements Adapter {
         }
     }
 
-    async getFolder(): Promise<{ result: Folder | null; error: Error | null }> {
+    async getRootFolder(): Promise<{ result: Folder | null; error: Error | null }> {
+        if(this.folder) {
+            return { result: this.folder, error: null };
+        }
         try {
             const filePathList: InputPath[] = [];
-
             const walk = async (
                 dir: FileSystemDirectoryHandle,
                 tokens: string[] = []
@@ -169,11 +172,9 @@ export class OPFSAdapter implements Adapter {
                     }
                 }
             };
-
             await walk(this.root);
-
-            const result = buildFileTree(filePathList);
-            return { result, error: null };
+            this.folder = buildFileTree(filePathList);
+            return { result: this.folder, error: null };
         } catch (error) {
             return { result: null, error: error as Error };
         }
