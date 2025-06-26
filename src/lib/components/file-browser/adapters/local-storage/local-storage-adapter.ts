@@ -1,8 +1,10 @@
 import type { Adapter } from "../adapter";
 import { buildTreeFromLocalStorage, parseStoredFileData } from "../../browser-utils/file-tree.svelte";
+import type { Folder } from "../../browser-utils/types.svelte";
 
 export class LocalStorageAdapter implements Adapter {
     private homePath: string;
+    private rootFolder: Folder | null = null;
 
     constructor(homePath: string) {
         this.homePath = homePath;
@@ -29,26 +31,26 @@ export class LocalStorageAdapter implements Adapter {
                     if (!dataURL) {
                         return { result: null, error: new Error(`File not found: ${path}`) };
                     }
-                    
+
                     const fileData = await parseStoredFileData(dataURL);
                     const blob = fileData.blob || await fetch(dataURL).then(r => r.blob());
                     if(!blob) {
                         throw Error("couldn't parse data file")
                     }
-                    
+
                     return { result: { path, data: blob }, error: null };
                 } catch (error) {
                     return { result: null, error: error as Error };
                 }
             })
         );
-        
+
         return results;
     }
 
     async upload(file: File, fullFolderPath: string, overwrite = false): Promise<Error | null> {
         const key = this.keyFor(`${this.homePath}/${fullFolderPath}${file.name}`);
-        
+
         if (!overwrite && localStorage.getItem(key)) {
             return new Error(`File exists: ${key}`);
         }
@@ -111,9 +113,13 @@ export class LocalStorageAdapter implements Adapter {
         }
     }
 
-    async getFolder() {
+    async getRootFolder() {
+        if (this.rootFolder) {
+            return { result: this.rootFolder, error: null };
+        }
         try {
             const tree = await buildTreeFromLocalStorage(this.homePath);
+            this.rootFolder = tree;
             return { result: tree, error: null };
         } catch (error) {
             return { result: null, error: error as Error };
