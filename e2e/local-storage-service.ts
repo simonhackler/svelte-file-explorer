@@ -9,24 +9,20 @@ export class LocalStorageService implements StorageService {
         this.homePath = homePath;
     }
 
-    private keyFor(path: string): string {
-        return `${this.homePath}/${path}`;
-    }
-
     async beforeEach(page: Page): Promise<string> {
         await page.goto('/local-storage-file-viewer');
-        return '/home'; 
+        return '/home';
     }
 
     async uploadFile(
         page: Page,
         bucketName: string, // Ignored for localStorage as it doesn't use buckets
-        filePath: string, 
+        filePath: string,
         fileContent?: Blob | File | FormData | ArrayBuffer | ReadableStream | Buffer | string
     ): Promise<{ path: string } | null | undefined> {
-        
+
         const storageKey = filePath;
-        
+
         let dataURL = 'data:text/plain;base64,';
         if (typeof fileContent === 'string') {
             dataURL = `data:text/plain;base64,${btoa(fileContent)}`;
@@ -39,18 +35,18 @@ export class LocalStorageService implements StorageService {
         await page.evaluate(([key, value]) => {
             localStorage.setItem(key, value);
         }, [storageKey, dataURL]);
-        
+
         return { path: filePath };
     }
 
 
     async checkFileExistence(
         page: Page,
-        folderPath: string, 
-        fileName: string,   
+        folderPath: string,
+        fileName: string,
         expected: boolean
     ): Promise<void> {
-        const constructedFilePath = `${folderPath}/${fileName}`; 
+        const constructedFilePath = `${folderPath}/${fileName}`;
         const storageKey = (constructedFilePath);
 
         const fileExists = await page.evaluate((key: string) => {

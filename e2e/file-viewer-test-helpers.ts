@@ -1,12 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { StorageService, SupabaseStorageService } from './storage-service'; // Import the new service
 import type { Page } from '@playwright/test';
-import { LocalStorageService } from './local-storage-service';
+import type { StorageService } from './storage-service';
 
-const supabaseStorageService = new SupabaseStorageService(); // Instantiate the service
-const localStorageFileService = new LocalStorageService('/home'); // Instantiate the service
-
-async function createFolderStructure(page: Page, storageService: StorageService, userId: string) {
+export async function createFolderStructure(page: Page, storageService: StorageService, userId: string) {
     const testFiles = [
         `${userId}/README.md`,
         `${userId}/package.json`,
@@ -72,37 +68,33 @@ async function createFolderStructure(page: Page, storageService: StorageService,
     await Promise.all(testFiles.map(filePath => storageService.uploadFile(page, 'folders', filePath)));
 }
 
-async function pressMenuItem(page: Page, fileName: string, itemName: string) {
+export async function pressMenuItem(page: Page, fileName: string, itemName: string) {
     await page.getByTestId(fileName).locator('button').nth(1).click();
     await page.getByRole('menuitem', { name: itemName }).click();
 }
 
-[
-    { service: supabaseStorageService, name: 'Supabase Storage Service' },
-    { service: localStorageFileService, name: 'Local Storage Service' }
-].forEach(storageService => {
-    test(`${storageService.name} test delete folder and files`, async ({ page }) => {
-        const path = await storageService.service.beforeEach(page);
+export function createFileViewerTests(storageService: StorageService, serviceName: string) {
+    test(`${serviceName} test delete folder and files`, async ({ page }) => {
+        const path = await storageService.beforeEach(page);
 
-        await createFolderStructure(page, storageService.service, path);
+        await createFolderStructure(page, storageService, path);
         await page.reload({ waitUntil: 'networkidle' });
 
-        await storageService.service.checkFileExistence(page, path, 'README.md', true);
-        await storageService.service.checkFileExistence(page, path, 'config/environments/development.env', true);
+        await storageService.checkFileExistence(page, path, 'README.md', true);
+        await storageService.checkFileExistence(page, path, 'config/environments/development.env', true);
         await pressMenuItem(page, 'README.md', 'Delete');
         await pressMenuItem(page, 'config', 'Delete');
-
 
         await expect(page.getByTestId('README.md')).not.toBeVisible();
         await expect(page.getByTestId('config')).not.toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, 'README.md', false);
-        await storageService.service.checkFileExistence(page, path, 'config/environments/development.env', false);
+        await storageService.checkFileExistence(page, path, 'README.md', false);
+        await storageService.checkFileExistence(page, path, 'config/environments/development.env', false);
     });
 
-    test(`${storageService.name} test move files`, async ({ page }) => {
-        const path = await storageService.service.beforeEach(page);
-        await createFolderStructure(page, storageService.service, path);
+    test(`${serviceName} test move files`, async ({ page }) => {
+        const path = await storageService.beforeEach(page);
+        await createFolderStructure(page, storageService, path);
         await page.reload({ waitUntil: 'networkidle' });
 
         await pressMenuItem(page, 'README.md', 'Move');
@@ -115,13 +107,13 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
         await page.getByRole('button', { name: 'home' }).click();
         await expect(page.getByTestId('README.md')).not.toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, 'README.md', false);
-        await storageService.service.checkFileExistence(page, path, 'downloads/README.md', true);
+        await storageService.checkFileExistence(page, path, 'README.md', false);
+        await storageService.checkFileExistence(page, path, 'downloads/README.md', true);
     });
 
-    test(`${storageService.name} test copy files`, async ({ page }) => {
-        const path = await storageService.service.beforeEach(page);
-        await createFolderStructure(page, storageService.service, path);
+    test(`${serviceName} test copy files`, async ({ page }) => {
+        const path = await storageService.beforeEach(page);
+        await createFolderStructure(page, storageService, path);
         await page.reload({ waitUntil: 'networkidle' });
 
         await pressMenuItem(page, 'README.md', 'Copy');
@@ -133,13 +125,13 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
         await page.getByRole('button', { name: 'home' }).click();
         await expect(page.getByTestId('README.md')).toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, 'README.md', true);
-        await storageService.service.checkFileExistence(page, path, 'downloads/README.md', true);
+        await storageService.checkFileExistence(page, path, 'README.md', true);
+        await storageService.checkFileExistence(page, path, 'downloads/README.md', true);
     });
 
-    test(`${storageService.name} upload file, upload overwrite and upload rename`, async ({ page }) => {
-        const path = await storageService.service.beforeEach(page);
-        await createFolderStructure(page, storageService.service, path);
+    test(`${serviceName} upload file, upload overwrite and upload rename`, async ({ page }) => {
+        const path = await storageService.beforeEach(page);
+        await createFolderStructure(page, storageService, path);
         await page.reload({ waitUntil: 'networkidle' });
 
         await page.getByText('Upload').click();
@@ -155,7 +147,7 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
         await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
         await expect(page.getByTestId(name)).toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, name, true);
+        await storageService.checkFileExistence(page, path, name, true);
 
         await page.getByText('Upload').nth(0).click();
         await page.setInputFiles('input[type="file"]', {
@@ -167,7 +159,7 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
         await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
         await expect(page.getByTestId(name)).toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, name, true);
+        await storageService.checkFileExistence(page, path, name, true);
 
         await page.getByText('Upload').nth(0).click();
         await page.setInputFiles('input[type="file"]', {
@@ -182,6 +174,6 @@ async function pressMenuItem(page: Page, fileName: string, itemName: string) {
         await page.getByLabel('Upload files').getByRole('button', { name: 'Upload' }).click();
         await expect(page.getByTestId(renamedName)).toBeVisible();
 
-        await storageService.service.checkFileExistence(page, path, renamedName, true);
+        await storageService.checkFileExistence(page, path, renamedName, true);
     });
-});
+}
