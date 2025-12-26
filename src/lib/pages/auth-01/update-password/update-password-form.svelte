@@ -8,7 +8,10 @@
 	import { page } from '$app/stores';
 	import PasswordInput from '$lib/components/ui/password-input/password-input.svelte';
 
-	let { data, updated }: { data: { loginForm: SuperValidated<Infer<UpdatePasswordSchema>> }, updated: boolean} =
+	let {
+		data,
+		updated
+	}: { data: { loginForm: SuperValidated<Infer<UpdatePasswordSchema>> }; updated: boolean } =
 		$props();
 
 	const form = superForm(data.loginForm, {
@@ -56,7 +59,7 @@
 </Card.Root>
 
 <style>
-	@import '/src/app.css';
+	@reference '/src/app.css';
 
 	.error {
 		@apply text-red-600;

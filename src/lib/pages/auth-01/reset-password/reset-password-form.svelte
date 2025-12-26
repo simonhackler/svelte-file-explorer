@@ -8,10 +8,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 
-	let {
-		data
-	}: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> }} =
-		$props();
+	let { data }: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> } } = $props();
 
 	const form = superForm(data.loginForm, {
 		validators: zodClient(resetPasswordSchema)
@@ -51,7 +48,7 @@
 </Card.Root>
 
 <style>
-    @import '/src/app.css';
+	@reference '/src/app.css';
 
 	.error {
 		@apply text-red-600;

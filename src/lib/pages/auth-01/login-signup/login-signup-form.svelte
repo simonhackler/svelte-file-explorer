@@ -12,14 +12,15 @@
 	let {
 		data,
 		mode = 'login'
-	}: { data: { loginForm: SuperValidated<Infer<LoginSchema>> }; mode: 'login' | 'signup' } = $props();
+	}: { data: { loginForm: SuperValidated<Infer<LoginSchema>> }; mode: 'login' | 'signup' } =
+		$props();
 
 	const form = superForm(data.loginForm, {
 		validators: zodClient(loginSchema)
 	});
 
 	const { form: formData, enhance, message } = form;
-    const action = $derived(mode === 'login' ? '?/login' : '?/signup');
+	const action = $derived(mode === 'login' ? '?/login' : '?/signup');
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
@@ -92,7 +93,7 @@
 </Card.Root>
 
 <style>
-    @import '/src/app.css';
+	@reference '/src/app.css';
 
 	.success {
 		color: green;
