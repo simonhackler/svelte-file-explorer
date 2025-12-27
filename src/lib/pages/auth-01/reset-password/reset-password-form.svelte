@@ -39,18 +39,12 @@
 					</Form.Field>
 				</div>
 				{#if $message}
-					<p class:success={$page.status == 200} class:error={$page.status >= 400}>{$message}</p>
+					<p class:text-green-600={$page.status == 200} class:text-red-600={$page.status >= 400}>
+						{$message}
+					</p>
 				{/if}
 				<Button type="submit" class="w-full">Reset password</Button>
 			</div>
 		</form>
 	</Card.Content>
 </Card.Root>
-
-<style>
-	@reference '/src/app.css';
-
-	.error {
-		@apply text-red-600;
-	}
-</style>
