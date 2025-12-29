@@ -4,7 +4,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { updatePasswordSchema, type UpdatePasswordSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import PasswordInput from '$lib/components/ui/password-input/password-input.svelte';
 
@@ -15,7 +15,7 @@
 		$props();
 
 	const form = superForm(data.loginForm, {
-		validators: zodClient(updatePasswordSchema)
+		validators: zod4Client(updatePasswordSchema)
 	});
 
 	const { form: formData, enhance, message } = form;

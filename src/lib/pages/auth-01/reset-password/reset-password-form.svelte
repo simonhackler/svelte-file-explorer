@@ -5,13 +5,13 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 
 	let { data }: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> } } = $props();
 
 	const form = superForm(data.loginForm, {
-		validators: zodClient(resetPasswordSchema)
+		validators: zod4Client(resetPasswordSchema)
 	});
 
 	const { form: formData, enhance, message } = form;
