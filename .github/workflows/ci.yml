@@ -25,7 +25,12 @@ jobs:
           version: latest
 
       - name: Start Supabase
-        run: supabase start
+        run: |
+          supabase start
+          # Ensure email templates are loaded by restarting once
+          sleep 3
+          supabase stop  
+          supabase start
 
       - name: Dump Supabase env (with overridden key names)
         run: |
