@@ -8,6 +8,7 @@
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import PasswordInput from '$lib/components/ui/password-input/password-input.svelte';
 	import { page } from '$app/stores';
+	import { resolve } from '$app/paths';
 
 	let {
 		data,
@@ -56,7 +57,10 @@
 								<div class="flex items-center">
 									<Form.Label class="text-sm">Password</Form.Label>
 									{#if mode === 'login'}
-										<a href="/01/reset-password" class="ml-auto inline-block text-sm underline">
+										<a
+											href={resolve('/01/reset-password')}
+											class="ml-auto inline-block text-sm underline"
+										>
 											Forgot your password?
 										</a>
 									{/if}
@@ -86,10 +90,10 @@
 			<div class="mt-4 text-center text-sm">
 				{#if mode === 'login'}
 					Don't have an account?
-					<a href="/01/signup" class="underline"> Sign up </a>
+					<a href={resolve('/01/signup')} class="underline"> Sign up </a>
 				{:else}
 					Already have an account?
-					<a href="/01/login" class="underline"> Login </a>
+					<a href={resolve('/01/login')} class="underline"> Login </a>
 				{/if}
 			</div>
 		</form>

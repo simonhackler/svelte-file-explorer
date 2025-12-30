@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import ResetPasswordForm from '$lib/pages/auth-01/reset-password/reset-password-form.svelte';
-	('$lib/pages/auth-01/reset-password/reset-password-form.svelte');
 	import ResetPasswordConfirmed from '$lib/pages/auth-01/reset-password/reset-password-confirmed.svelte';
 
 	let { data, form }: PageProps = $props();

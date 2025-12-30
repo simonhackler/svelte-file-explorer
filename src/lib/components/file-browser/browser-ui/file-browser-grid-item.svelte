@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
 
 	import { displaySize } from '$lib/components/ui/file-drop-zone';
 	import {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 
-	import { isFolder, type ExplorerNode, Folder } from '../browser-utils/types.svelte';
+	import { type ExplorerNode, Folder } from '../browser-utils/types.svelte';
 	import FileBrowser from './file-browser.svelte';
 	import { Button } from '$lib/components/ui/button';
 

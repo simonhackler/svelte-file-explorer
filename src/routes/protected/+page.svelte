@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 	let { supabase } = $derived(data);
@@ -10,7 +11,7 @@
 		if (error) {
 			console.error(error);
 		}
-		goto('/');
+		goto(resolve('/'));
 	};
 </script>
 

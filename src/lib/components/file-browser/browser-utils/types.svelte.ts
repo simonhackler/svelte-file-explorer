@@ -1,3 +1,5 @@
+import { SvelteDate } from 'svelte/reactivity';
+
 export interface FileFunctions {
 	delete: (files: string[]) => Promise<Error | null>;
 	download: (
@@ -77,7 +79,7 @@ export function deepCopyExplorerNode(
 			fileDataCopy = {
 				size: originalData.size,
 				mimetype: originalData.mimetype,
-				updatedAt: new Date(originalData.updatedAt.getTime()),
+				updatedAt: new SvelteDate(originalData.updatedAt.getTime()),
 				url: originalData.url
 			};
 		}

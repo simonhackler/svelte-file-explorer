@@ -12,7 +12,7 @@
 
 {#if isFolder(node)}
 	<TreeView.Folder name={node.name}>
-		{#each node.children as child}
+		{#each node.children as child (child.name)}
 			<FileItem node={child} />
 		{/each}
 	</TreeView.Folder>

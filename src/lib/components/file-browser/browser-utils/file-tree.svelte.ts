@@ -1,5 +1,5 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { FileLeaf, Folder, type ExplorerNode, type FileData } from './types.svelte';
+import { SvelteDate } from 'svelte/reactivity';
 
 export interface InputPath {
 	pathTokens: string[];
@@ -52,21 +52,6 @@ function convertToArray(buildNode: BuildNode, parent: Folder | null): ExplorerNo
 	return node;
 }
 
-function prettyPrintTreeArray(node: ExplorerNode, prefix = ''): void {
-	if (!(node instanceof Folder)) return;
-
-	const kids = [...node.children];
-	kids.sort((a, b) => a.name.localeCompare(b.name));
-
-	kids.forEach((child, idx) => {
-		const last = idx === kids.length - 1;
-		const branch = last ? '└── ' : '├── ';
-		const newPrefix = prefix + (last ? '    ' : '│   ');
-		console.log(newPrefix + branch + child.name);
-		prettyPrintTreeArray(child, newPrefix);
-	});
-}
-
 export function buildFileTree(filePathList: InputPath[]) {
 	const tree = buildTree(filePathList);
 	return convertToArray(tree, null) as Folder;
@@ -80,7 +65,7 @@ export async function parseStoredFileData(stored: string) {
 	let dataURL: string;
 	let size = 0;
 	let mimetype = 'application/octet-stream';
-	let updatedAt = new Date(0);
+	let updatedAt = new SvelteDate(0);
 	let blob: Blob | undefined = undefined;
 	let url: Promise<string> | undefined = undefined;
 
@@ -90,7 +75,7 @@ export async function parseStoredFileData(stored: string) {
 			dataURL = obj.dataURL;
 			size = obj.size ?? base64Size(dataURL.split(',')[1] ?? '');
 			mimetype = obj.mimetype ?? mimetype;
-			updatedAt = new Date(obj.updatedAt ?? Date.now());
+			updatedAt = new SvelteDate(obj.updatedAt ?? Date.now());
 			blob = await (await fetch(dataURL)).blob();
 			url = Promise.resolve(URL.createObjectURL(blob));
 		} else {

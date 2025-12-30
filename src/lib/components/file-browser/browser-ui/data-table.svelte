@@ -1,4 +1,4 @@
-<script lang="ts" generics="TValue">
+<script lang="ts">
 	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 
@@ -20,7 +20,7 @@
 	import { cn } from '$lib/utils/utils';
 	import { isFolder, type ExplorerNode } from '../browser-utils/types.svelte';
 	import FileBrowserGridItem from './file-browser-grid-item.svelte';
-	import type { Snippet } from 'svelte';
+	import type { Snippet, Component } from 'svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -33,7 +33,7 @@
 		downloadNodes: (nodes: ExplorerNode[]) => Promise<Error | null>;
 	}
 
-	type DataTableProps<ExplorerNode, TValue> = {
+	type DataTableProps = {
 		data: ExplorerNode[];
 		display: 'list' | 'grid';
 		actionList: Snippet<[ExplorerNode]>;
@@ -51,7 +51,7 @@
 		actionList,
 		showActions = true,
 		fileFunctions
-	}: DataTableProps<ExplorerNode, TValue> = $props();
+	}: DataTableProps = $props();
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
@@ -177,7 +177,7 @@
 
 	async function executeFileFunction(
 		nodes: ExplorerNode[],
-		fileFunction: (nodes: ExplorerNode[]) => any
+		fileFunction: (nodes: ExplorerNode[]) => Promise<Error | null> | void
 	) {
 		fileFunction(nodes);
 		table.resetRowSelection();
@@ -204,7 +204,7 @@
 				{#snippet functionButton(
 					fileFunction: (nodes: ExplorerNode[]) => void,
 					text: string,
-					Icon: any
+					Icon: Component
 				)}
 					<Button
 						onclick={() =>

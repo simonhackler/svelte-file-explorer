@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Toaster, toast } from 'svelte-sonner';
+	import { Toaster } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import type { User, SupabaseClient } from '@supabase/supabase-js';
 
@@ -10,7 +10,9 @@
 
 	const supabase = $derived(data.supabase);
 	const user = $derived(data.user as User);
-	const supabaseAdapter = $derived(new SupabaseAdapter(supabase as any as SupabaseClient, user.id));
+	const supabaseAdapter = $derived(
+		new SupabaseAdapter(supabase as unknown as SupabaseClient, user.id)
+	);
 </script>
 
 <AdapterFileBrowser adapter={supabaseAdapter} pathPrefix={user.id + '/'} />

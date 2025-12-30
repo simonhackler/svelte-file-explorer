@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
-import { type Handle, redirect } from '@sveltejs/kit';
-import { sequence } from '@sveltejs/kit/hooks';
+import { type Handle } from '@sveltejs/kit';
 
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import type { Database } from './schema';
@@ -22,7 +21,7 @@ const supabase: Handle = async ({ event, resolve }) => {
 				 * the cookie options. Setting `path` to `/` replicates previous/
 				 * standard behavior.
 				 */
-				setAll: (cookiesToSet: Array<{ name: string; value: string; options: any }>) => {
+				setAll: (cookiesToSet: Array<{ name: string; value: string; options: object }>) => {
 					cookiesToSet.forEach(({ name, value, options }) => {
 						event.cookies.set(name, value, { ...options, path: '/' });
 					});
@@ -71,24 +70,6 @@ const supabase: Handle = async ({ event, resolve }) => {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
 	});
-};
-
-const authRoute = '/auth';
-
-const authGuard: Handle = async ({ event, resolve }) => {
-	const { session, user } = await event.locals.safeGetSession();
-	event.locals.session = session;
-	event.locals.user = user;
-
-	if (!event.locals.session && event.url.pathname.startsWith('/private')) {
-		redirect(303, authRoute);
-	}
-
-	if (event.locals.session && event.url.pathname === authRoute) {
-		redirect(303, '/private');
-	}
-
-	return resolve(event);
 };
 
 export const handle: Handle = supabase;

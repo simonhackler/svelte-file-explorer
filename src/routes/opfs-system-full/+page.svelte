@@ -73,7 +73,7 @@
 </script>
 
 {#if dirPicker && !opfsAdapter}
-	<button onclick={(e) => pickFolder()}>Pick folder</button>
+	<button onclick={() => pickFolder()}>Pick folder</button>
 {/if}
 
 {#if opfsAdapter}

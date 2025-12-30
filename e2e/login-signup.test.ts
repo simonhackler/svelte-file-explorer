@@ -7,7 +7,6 @@ import {
 	performLogin,
 	setupUserWithEmail
 } from './helper';
-import { createUser } from './supabase';
 
 test('login', async ({ page }) => {
 	await loginAndCreateUser(page);
