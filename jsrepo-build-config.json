@@ -3,10 +3,7 @@
 	"name": "@simonhackler/svelte-shadcn-file-browser",
 	"version": "0.0.1",
 	"readme": "README.md",
-	"dirs": [
-		"./src/lib",
-		"./src/lib/components"
-	],
+	"dirs": ["./src/lib", "./src/lib/components"],
 	"doNotListBlocks": [],
 	"doNotListCategories": [],
 	"listBlocks": ["adapters", "browser-ui", "browser-utils"],
@@ -18,5 +15,5 @@
 	"excludeCategories": [],
 	"preview": false,
 	"includeDocs": false,
-    "allowSubdirectories": true
+	"allowSubdirectories": true
 }

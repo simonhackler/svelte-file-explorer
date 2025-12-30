@@ -13,7 +13,7 @@
 		node: ExplorerNode;
 		onDelete: (node: ExplorerNode) => Promise<void>;
 		onDownload: (node: ExplorerNode) => Promise<void>;
-        onMove: (node: ExplorerNode) => void;
+		onMove: (node: ExplorerNode) => void;
 		onCopy: (node: ExplorerNode) => void;
 	} = $props();
 
@@ -38,7 +38,7 @@
 			{#if url}
 				{#await url then url}
 					<DropdownMenu.Item>
-						<a class="flex gap-2 cursor-default" href={url} download={node.name}>
+						<a class="flex cursor-default gap-2" href={url} download={node.name}>
 							<Download /> Download
 						</a>
 					</DropdownMenu.Item>

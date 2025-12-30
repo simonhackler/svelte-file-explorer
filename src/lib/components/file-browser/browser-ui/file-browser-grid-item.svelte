@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Checkbox as CheckboxPrimitive } from "bits-ui";
+	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
 
 	import { displaySize } from '$lib/components/ui/file-drop-zone';
-	import { isFolder, type ExplorerNode } from '$lib/components/file-browser/browser-utils/types.svelte';
+	import {
+		isFolder,
+		type ExplorerNode
+	} from '$lib/components/file-browser/browser-utils/types.svelte';
 	import FileBrowserItemIcon from './file-browser-item-icon.svelte';
 	import type { Snippet } from 'svelte';
 	import type { ButtonProps } from '$lib/components/ui/button';
@@ -12,21 +15,21 @@
 		child,
 		showActions = true,
 		actionList,
-        checkbox,
+		checkbox,
 		...restProps
 	}: {
 		child: ExplorerNode;
 		showActions?: boolean;
 		actionList: Snippet<[ExplorerNode]>;
-        checkbox?: Snippet;
+		checkbox?: Snippet;
 	} & Omit<ButtonProps, 'children'> = $props();
 </script>
 
-<Button class="h-full w-full relative" variant="ghost" data-testid={child.name} {...restProps}>
+<Button class="relative h-full w-full" variant="ghost" data-testid={child.name} {...restProps}>
 	<div class="flex h-full w-full flex-col items-center justify-center gap-4">
-        {#if checkbox}
-            {@render checkbox()}
-        {/if}
+		{#if checkbox}
+			{@render checkbox()}
+		{/if}
 		<FileBrowserItemIcon node={child} />
 		<p>{child.name}</p>
 		<div class="flex w-full items-center justify-between">

@@ -7,12 +7,10 @@
 	interface Props {
 		folder: Folder;
 		isLast?: boolean;
-        onBreadCrumbClick: (folder: Folder) => void;
+		onBreadCrumbClick: (folder: Folder) => void;
 	}
 
 	let { folder, isLast = true, onBreadCrumbClick }: Props = $props();
-
-
 </script>
 
 {#if folder.parent}

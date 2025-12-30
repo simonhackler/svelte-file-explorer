@@ -2,13 +2,13 @@
 
 ## Commands
 
-- **Build**: `npm run build` or `vite build`
-- **Lint**: `npm run lint` (prettier + eslint)
-- **Format**: `npm run format`
-- **Type Check**: `npm run check`
-- **Test**: `npm run test:e2e` (Playwright E2E tests)
-- **Single Test**: `npx playwright test <test-name>` (e.g., `npx playwright test file-viewer.test.ts`)
-- **Dev Server**: `npm run dev`
+- **Build**: `bun run build` or `vite build`
+- **Lint**: `bun run lint` (prettier + eslint)
+- **Format**: `bun run format`
+- **Type Check**: `bun run check`
+- **Test**: `bun run test:e2e` (Playwright E2E tests)
+- **Single Test**: `bun playwright test <test-name>` (e.g., `bun playwright test file-viewer.test.ts`)
+- **Dev Server**: `bun run dev`
 
 ## Code Style
 

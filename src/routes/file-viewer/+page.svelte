@@ -13,9 +13,6 @@
 	const supabaseAdapter = $derived(new SupabaseAdapter(supabase as any as SupabaseClient, user.id));
 </script>
 
-<AdapterFileBrowser
-	adapter={supabaseAdapter}
-	pathPrefix={user.id + '/'}
-/>
+<AdapterFileBrowser adapter={supabaseAdapter} pathPrefix={user.id + '/'} />
 
 <Toaster />

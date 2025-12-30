@@ -17,17 +17,19 @@
 		handleCurrentAction: (nodes: ExplorerNode[], currentFolder: Folder) => Promise<void>;
 	} = $props();
 
-	let currentFolder = $derived<Folder>(nodes.length > 0 && nodes[0].parent ? nodes[0].parent : new Folder('home', null, []));
+	let currentFolder = $derived<Folder>(
+		nodes.length > 0 && nodes[0].parent ? nodes[0].parent : new Folder('home', null, [])
+	);
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Content
 		class="flex max-h-[calc(100vh_-_100px)] min-h-[calc(100vh_-_100px)] min-w-full flex-col md:min-w-[80vw]"
 	>
-		<FileBrowser 
-			bind:currentFolder 
-			class="min-h-0 flex-1" 
-			showActions={false} 
+		<FileBrowser
+			bind:currentFolder
+			class="min-h-0 flex-1"
+			showActions={false}
 			fileFunctions={{
 				delete: () => Promise.resolve(null),
 				download: () => Promise.resolve([]),

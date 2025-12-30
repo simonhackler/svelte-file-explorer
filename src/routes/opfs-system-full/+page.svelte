@@ -55,7 +55,7 @@
 	async function initDirectory() {
 		try {
 			let dirHandle = await loadFolder();
-			
+
 			if (!dirHandle) {
 				return null;
 			}

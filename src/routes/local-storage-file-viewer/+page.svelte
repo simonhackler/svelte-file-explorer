@@ -3,13 +3,10 @@
 	import AdapterFileBrowser from '$lib/components/file-browser/browser-ui/adapter-file-browser.svelte';
 	import { LocalStorageAdapter } from '$lib/components/file-browser/adapters/local-storage/local-storage-adapter';
 
-    const homePath = '/home';
+	const homePath = '/home';
 	const localStorageAdapter = new LocalStorageAdapter(homePath);
 </script>
 
-<AdapterFileBrowser
-	adapter={localStorageAdapter}
-	pathPrefix={homePath + '/'}
-/>
+<AdapterFileBrowser adapter={localStorageAdapter} pathPrefix={homePath + '/'} />
 
 <Toaster />

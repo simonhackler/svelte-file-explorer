@@ -69,4 +69,9 @@
 	});
 </script>
 
-<FileBrowser bind:currentFolder homeFolderPath={pathPrefix} fileFunctions={adapter} class={className} />
+<FileBrowser
+	bind:currentFolder
+	homeFolderPath={pathPrefix}
+	fileFunctions={adapter}
+	class={className}
+/>

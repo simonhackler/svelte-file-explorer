@@ -14,9 +14,11 @@
 	}: { data: { loginForm: SuperValidated<Infer<UpdatePasswordSchema>> }; updated: boolean } =
 		$props();
 
-	const form = $derived(superForm(data.loginForm, {
-		validators: zod4Client(updatePasswordSchema)
-	}));
+	const form = $derived(
+		superForm(data.loginForm, {
+			validators: zod4Client(updatePasswordSchema)
+		})
+	);
 
 	const { form: formData, enhance, message } = $derived(form);
 </script>

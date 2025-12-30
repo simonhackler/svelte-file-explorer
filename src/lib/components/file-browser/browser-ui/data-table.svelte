@@ -13,7 +13,7 @@
 		getFilteredRowModel,
 		type SortingState,
 		type VisibilityState,
-        type RowSelectionState
+		type RowSelectionState
 	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -201,7 +201,11 @@
 		</div>
 		{#if table.getFilteredSelectedRowModel().rows.length > 0 && fileFunctions}
 			<div class="flex items-center gap-2">
-				{#snippet functionButton(fileFunction: (nodes: ExplorerNode[]) => void, text: string, Icon: any)}
+				{#snippet functionButton(
+					fileFunction: (nodes: ExplorerNode[]) => void,
+					text: string,
+					Icon: any
+				)}
 					<Button
 						onclick={() =>
 							executeFileFunction(

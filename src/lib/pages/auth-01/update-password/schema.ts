@@ -1,4 +1,4 @@
-import { loginSchema } from "../login-signup/schema";
+import { loginSchema } from '../login-signup/schema';
 
 export const updatePasswordSchema = loginSchema.pick({ password: true });
 
