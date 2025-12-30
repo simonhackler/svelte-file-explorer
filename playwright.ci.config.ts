@@ -9,6 +9,8 @@ export default defineConfig({
 		command: 'bun run build && bun run preview --port=5173',
 		port: 5173,
 		timeout: 120_000,
-		reuseExistingServer: false
+		reuseExistingServer: false,
+		stdout: 'pipe',
+		stderr: 'pipe'
 	}
 });
