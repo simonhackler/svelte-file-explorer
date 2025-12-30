@@ -3,7 +3,7 @@ import shared from './playwright.config';
 
 export default defineConfig({
 	...shared,
-    workers: 1,
+	workers: 1,
 	retries: 2,
 	webServer: {
 		command: 'bun run build && bun run preview --port=5173',
