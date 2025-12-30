@@ -6,6 +6,9 @@ on:
 jobs:
   CI:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_WORKDIR: .
+
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
