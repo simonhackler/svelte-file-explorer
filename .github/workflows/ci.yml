@@ -22,15 +22,42 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pin to known-good version to avoid regressions
+          version: 2.70.5
 
       - name: Start Supabase
+        run: supabase start --workdir "$GITHUB_WORKSPACE"
+
+      - name: Force Auth to load custom email templates (workaround for CLI race)
+        shell: bash
         run: |
-          supabase start
-          # Ensure email templates are loaded by restarting once
-          sleep 3
-          supabase stop  
-          supabase start
+          set -euo pipefail
+
+          KONG_NAME="$(docker ps --filter "name=supabase_kong" --format "{{.Names}}" | head -n1)"
+          AUTH_NAME="$(docker ps --filter "name=supabase_auth" --format "{{.Names}}" | head -n1)"
+
+          echo "Kong container: $KONG_NAME"
+          echo "Auth container: $AUTH_NAME"
+
+          # Wait for Kong's template endpoint to come up (Auth fetches templates from here)
+          for i in {1..60}; do
+            if docker exec "$KONG_NAME" sh -lc \
+              'command -v curl >/dev/null 2>&1 && curl -fsS http://localhost:8088/email/confirmation.html >/dev/null || wget -qO- http://localhost:8088/email/confirmation.html >/dev/null 2>&1'
+            then
+              echo "Kong template endpoint is ready."
+              break
+            fi
+            sleep 1
+          done
+
+          # Restart Auth so it reloads templates after Kong is ready
+          docker restart "$AUTH_NAME"
+
+          # Optional: sanity check that the served template contains your app link
+          echo "=== Verifying template content ==="
+          docker exec "$KONG_NAME" sh -lc \
+            'command -v curl >/dev/null 2>&1 && curl -fsS http://localhost:8088/email/confirmation.html || wget -qO- http://localhost:8088/email/confirmation.html' \
+            | head -n 50
 
       - name: Dump Supabase env (with overridden key names)
         run: |
@@ -52,6 +79,10 @@ jobs:
 
       - name: Run Playwright tests
         run: bunx playwright test --config playwright.ci.config.ts --reporter=list
+
+      - name: Dump auth logs (on failure)
+        if: failure()
+        run: supabase logs auth --since 10m
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
