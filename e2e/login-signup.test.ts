@@ -20,7 +20,9 @@ test('signup', async ({ page }) => {
 	await page.getByRole('button', { name: 'Login', exact: true }).click();
 
 	const url = await getEmailLinkFromSupabaseAdmin(page, 'Confirm your email');
+	console.log('Navigating to confirmation URL:', url);
 	await page.goto(url, { waitUntil: 'networkidle' });
+	console.log('After confirmation, current URL:', page.url());
 
 	expect(page.url()).toContain('protected');
 });
