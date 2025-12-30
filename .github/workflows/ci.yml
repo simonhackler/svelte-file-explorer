@@ -16,15 +16,6 @@ jobs:
       - name: Build Registry
         run: bun build:registry
 
-      - name: Type Check
-        run: bun run check
-
-      - name: Lint
-        run: bun run lint
-
-      - name: Install Playwright Browsers
-        run: bunx playwright install --with-deps chromium --only-shell
-
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
@@ -40,6 +31,15 @@ jobs:
             --override-name auth.anon_key=PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
             > .env
+
+      - name: Type Check
+        run: bun run check
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Install Playwright Browsers
+        run: bunx playwright install --with-deps chromium --only-shell
 
       - name: Run Playwright tests
         run: bunx playwright test --config playwright.ci.config.ts
