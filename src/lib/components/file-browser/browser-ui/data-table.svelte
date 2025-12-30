@@ -55,7 +55,12 @@
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
-	let columnVisibility = $state<VisibilityState>({});
+	let userColumnVisibility = $state<VisibilityState>({});
+	let columnVisibility = $derived<VisibilityState>({
+		...userColumnVisibility,
+		actions: showActions,
+		select: showActions
+	});
 	let rowSelection = $state<RowSelectionState>({});
 
 	export const columns: ColumnDef<ExplorerNode>[] = [
@@ -98,7 +103,10 @@
 		},
 		{
 			accessorFn: (row) => {
-				return displaySize(row?.fileData?.size || 0);
+				if (isFolder(row)) {
+					return '—';
+				}
+				return displaySize(row.fileData?.size || 0);
 			},
 			header: 'Size'
 		}
@@ -128,9 +136,9 @@
 		},
 		onColumnVisibilityChange: (updater) => {
 			if (typeof updater === 'function') {
-				columnVisibility = updater(columnVisibility);
+				userColumnVisibility = updater(userColumnVisibility);
 			} else {
-				columnVisibility = updater;
+				userColumnVisibility = updater;
 			}
 		},
 		onRowSelectionChange: (updater) => {
@@ -155,9 +163,6 @@
 			}
 		}
 	});
-
-	table.getColumn('actions')?.toggleVisibility(showActions);
-	table.getColumn('select')?.toggleVisibility(showActions);
 
 	function blockClick(e: MouseEvent) {
 		e.stopPropagation();
@@ -196,7 +201,7 @@
 		</div>
 		{#if table.getFilteredSelectedRowModel().rows.length > 0 && fileFunctions}
 			<div class="flex items-center gap-2">
-				{#snippet functionButton(fileFunction, text, Icon)}
+				{#snippet functionButton(fileFunction: (nodes: ExplorerNode[]) => void, text: string, Icon: any)}
 					<Button
 						onclick={() =>
 							executeFileFunction(

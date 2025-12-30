@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Toaster, toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
-	import type { User } from '@supabase/supabase-js';
+	import type { User, SupabaseClient } from '@supabase/supabase-js';
 
 	import AdapterFileBrowser from '$lib/components/file-browser/browser-ui/adapter-file-browser.svelte';
 	import { SupabaseAdapter } from '$lib/components/file-browser/adapters/supabase/supabase-adapter';
@@ -10,7 +10,7 @@
 
 	const supabase = $derived(data.supabase);
 	const user = $derived(data.user as User);
-	const supabaseAdapter = new SupabaseAdapter(supabase, user.id);
+	const supabaseAdapter = $derived(new SupabaseAdapter(supabase as any as SupabaseClient, user.id));
 </script>
 
 <AdapterFileBrowser

@@ -10,11 +10,11 @@
 
 	let { data }: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> } } = $props();
 
-	const form = superForm(data.loginForm, {
+	const form = $derived(superForm(data.loginForm, {
 		validators: zod4Client(resetPasswordSchema)
-	});
+	}));
 
-	const { form: formData, enhance, message } = form;
+	const { form: formData, enhance, message } = $derived(form);
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">

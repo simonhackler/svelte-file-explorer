@@ -15,11 +15,11 @@
 	}: { data: { loginForm: SuperValidated<Infer<LoginSchema>> }; mode: 'login' | 'signup' } =
 		$props();
 
-	const form = superForm(data.loginForm, {
+	const form = $derived(superForm(data.loginForm, {
 		validators: zod4Client(loginSchema)
-	});
+	}));
 
-	const { form: formData, enhance, message } = form;
+	const { form: formData, enhance, message } = $derived(form);
 	const action = $derived(mode === 'login' ? '?/login' : '?/signup');
 </script>
 

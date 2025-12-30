@@ -14,11 +14,11 @@
 	}: { data: { loginForm: SuperValidated<Infer<UpdatePasswordSchema>> }; updated: boolean } =
 		$props();
 
-	const form = superForm(data.loginForm, {
+	const form = $derived(superForm(data.loginForm, {
 		validators: zod4Client(updatePasswordSchema)
-	});
+	}));
 
-	const { form: formData, enhance, message } = form;
+	const { form: formData, enhance, message } = $derived(form);
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">

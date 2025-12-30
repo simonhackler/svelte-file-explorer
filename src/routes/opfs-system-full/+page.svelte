@@ -29,7 +29,7 @@
 	});
 
 	async function verifyPermission(handle: FileSystemDirectoryHandle, readWrite = false) {
-		const opts = readWrite ? { mode: 'readwrite' } : {};
+		const opts = readWrite ? { mode: 'readwrite' as FileSystemPermissionMode } : {};
 		if ((await handle.queryPermission(opts)) === 'granted') {
 			return true;
 		}
@@ -53,13 +53,22 @@
 	}
 
 	async function initDirectory() {
-		let dirHandle = await loadFolder();
+		try {
+			let dirHandle = await loadFolder();
+			
+			if (!dirHandle) {
+				return null;
+			}
 
-		const ok = await verifyPermission(dirHandle, true);
-		if (!ok) {
-			throw new Error('Access to the directory was denied.');
+			const ok = await verifyPermission(dirHandle, true);
+			if (!ok) {
+				return null;
+			}
+			return dirHandle;
+		} catch (error) {
+			console.error('Failed to initialize directory:', error);
+			return null;
 		}
-		return dirHandle;
 	}
 </script>
 
