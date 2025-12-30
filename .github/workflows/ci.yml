@@ -42,7 +42,7 @@ jobs:
         run: bunx playwright install --with-deps chromium --only-shell
 
       - name: Run Playwright tests
-        run: bunx playwright test --config playwright.ci.config.ts
+        run: bunx playwright test --config playwright.ci.config.ts --reporter=list
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

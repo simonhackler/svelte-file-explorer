@@ -8,14 +8,19 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const type = url.searchParams.get('type') as EmailOtpType | null;
 	const next = url.searchParams.get('next') ?? '/';
 
+	console.log('Auth confirm params:', { token_hash, type, next });
+
 	if (token_hash && type) {
 		const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+		console.log('VerifyOtp result:', { error });
 		if (!error) {
+			console.log('Redirecting to:', next);
 			redirect(303, next);
 		} else {
-			console.error(error);
+			console.error('VerifyOtp error:', error);
 		}
 	}
 
+	console.log('Redirecting to auth error');
 	redirect(303, '/auth/error');
 };
