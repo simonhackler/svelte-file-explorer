@@ -41,7 +41,6 @@ jobs:
             --override-name auth.anon_key=PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
             > .env
-          cat .env
 
       - name: Type Check
         run: bun run check

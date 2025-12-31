@@ -18,7 +18,6 @@ export async function getEmailLinkFromSupabaseAdmin(page: Page, linkText: string
 		.contentFrame()
 		.getByRole('link', { name: linkText })
 		.getAttribute('href');
-	console.log('Extracted email link:', url);
 	return url!;
 }
 
