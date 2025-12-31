@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Ellipsis, Trash2, Folders, FolderOutput, Download } from '@lucide/svelte';
-	import { isFolder, type ExplorerNode, type Folder } from '../browser-utils/types.svelte';
+	import { isFolder, type ExplorerNode } from '../browser-utils/types.svelte';
 
 	let {
 		node,
@@ -13,13 +13,14 @@
 		node: ExplorerNode;
 		onDelete: (node: ExplorerNode) => Promise<void>;
 		onDownload: (node: ExplorerNode) => Promise<void>;
-        onMove: (node: ExplorerNode) => void;
+		onMove: (node: ExplorerNode) => void;
 		onCopy: (node: ExplorerNode) => void;
 	} = $props();
 
 	const url = $derived(!isFolder(node) && node.fileData?.url?.then((url) => url));
 </script>
 
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Ellipsis />
@@ -38,7 +39,12 @@
 			{#if url}
 				{#await url then url}
 					<DropdownMenu.Item>
-						<a class="flex gap-2 cursor-default" href={url} download={node.name}>
+						<a
+							class="flex cursor-default gap-2"
+							href={url}
+							download={node.name}
+							data-sveltekit-reload
+						>
 							<Download /> Download
 						</a>
 					</DropdownMenu.Item>

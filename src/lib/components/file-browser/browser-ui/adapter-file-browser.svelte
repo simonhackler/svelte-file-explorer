@@ -16,11 +16,7 @@
 	} = $props();
 
 	let tree = $state<Folder>(new Folder('home', null, []));
-	let currentFolder = $state<Folder>(new Folder('home', null, []));
-
-	$effect(() => {
-		currentFolder = tree;
-	});
+	let currentFolder = $derived(tree);
 
 	function getPathArray(node: ExplorerNode): string[] {
 		const parts = [node.name];
@@ -69,4 +65,9 @@
 	});
 </script>
 
-<FileBrowser bind:currentFolder homeFolderPath={pathPrefix} fileFunctions={adapter} class={className} />
+<FileBrowser
+	bind:currentFolder
+	homeFolderPath={pathPrefix}
+	fileFunctions={adapter}
+	class={className}
+/>

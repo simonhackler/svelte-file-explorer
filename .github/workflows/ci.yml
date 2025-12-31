@@ -2,11 +2,13 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
 
 jobs:
   CI:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_WORKDIR: .
+
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -17,16 +19,20 @@ jobs:
       - name: Build Registry
         run: bun build:registry
 
-      - name: Install Playwright Browsers
-        run: bunx playwright install --with-deps chromium --only-shell
-
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pin to known-good version to avoid regressions
+          version: 2.70.5
 
       - name: Start Supabase
-        run: supabase start
+        run: supabase start --workdir "$GITHUB_WORKSPACE"
+
+      - name: Force Auth to load custom email templates (workaround for CLI race)
+        run: |
+          # Simple fix: just restart the Auth container after a brief wait
+          sleep 10
+          docker restart $(docker ps --filter "name=supabase_auth" --format "{{.Names}}" | head -n1)
 
       - name: Dump Supabase env (with overridden key names)
         run: |
@@ -36,9 +42,21 @@ jobs:
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
             > .env
 
-      - name: Run Playwright tests
-        run: bunx playwright test --config playwright.ci.config.ts
+      - name: Type Check
+        run: bun run check
 
+      - name: Lint
+        run: bun run lint
+
+      - name: Install Playwright Browsers
+        run: bunx playwright install --with-deps chromium --only-shell
+
+      - name: Run Playwright tests
+        run: bunx playwright test --config playwright.ci.config.ts --reporter=list
+
+      - name: Dump auth logs (on failure)
+        if: failure()
+        run: supabase logs auth --since 10m
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -46,4 +64,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-

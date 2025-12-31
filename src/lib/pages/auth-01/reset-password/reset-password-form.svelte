@@ -5,16 +5,18 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { resetPasswordSchema, type ResetPasswordSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 
 	let { data }: { data: { loginForm: SuperValidated<Infer<ResetPasswordSchema>> } } = $props();
 
-	const form = superForm(data.loginForm, {
-		validators: zodClient(resetPasswordSchema)
-	});
+	const form = $derived(
+		superForm(data.loginForm, {
+			validators: zod4Client(resetPasswordSchema)
+		})
+	);
 
-	const { form: formData, enhance, message } = form;
+	const { form: formData, enhance, message } = $derived(form);
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
@@ -39,18 +41,12 @@
 					</Form.Field>
 				</div>
 				{#if $message}
-					<p class:success={$page.status == 200} class:error={$page.status >= 400}>{$message}</p>
+					<p class:text-green-600={$page.status == 200} class:text-red-600={$page.status >= 400}>
+						{$message}
+					</p>
 				{/if}
 				<Button type="submit" class="w-full">Reset password</Button>
 			</div>
 		</form>
 	</Card.Content>
 </Card.Root>
-
-<style>
-	@reference '/src/app.css';
-
-	.error {
-		@apply text-red-600;
-	}
-</style>

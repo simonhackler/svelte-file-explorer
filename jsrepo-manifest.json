@@ -13,16 +13,11 @@
 					"docs": false,
 					"subdirectory": false,
 					"list": false,
-					"files": [
-						"utils.ts"
-					],
+					"files": ["utils.ts"],
 					"localDependencies": [],
 					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": [
-						"clsx@^2.1.1",
-						"tailwind-merge@^3.3.0"
-					]
+					"devDependencies": ["clsx@^2.1.1", "tailwind-merge@^3.3.0"]
 				}
 			]
 		},
@@ -44,12 +39,8 @@
 						"supabase/helper.ts",
 						"supabase/supabase-adapter.ts"
 					],
-					"localDependencies": [
-						"file-browser/browser-utils"
-					],
-					"dependencies": [
-						"@supabase/supabase-js@^2.49.8"
-					],
+					"localDependencies": ["file-browser/browser-utils"],
+					"dependencies": ["@supabase/supabase-js@^2.49.8"],
 					"devDependencies": [],
 					"_imports_": {
 						"../browser-utils/types.svelte": "{{file-browser/browser-utils}}/types.svelte",
@@ -93,9 +84,7 @@
 						"ui/popover",
 						"ui/dialog"
 					],
-					"dependencies": [
-						"svelte-sonner@^1.0.3"
-					],
+					"dependencies": ["svelte-sonner@^1.0.3"],
 					"devDependencies": [
 						"@lucide/svelte@^0.513.0",
 						"@tanstack/table-core@^8.21.3",
@@ -132,16 +121,9 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
-					"files": [
-						"explorer-node-functions.ts",
-						"file-tree.svelte.ts",
-						"types.svelte.ts"
-					],
+					"files": ["explorer-node-functions.ts", "file-tree.svelte.ts", "types.svelte.ts"],
 					"localDependencies": [],
-					"dependencies": [
-						"client-zip@^2.5.0",
-						"@supabase/supabase-js@^2.49.8"
-					],
+					"dependencies": ["client-zip@^2.5.0", "@supabase/supabase-js@^2.49.8"],
 					"devDependencies": [],
 					"_imports_": {}
 				}
@@ -168,13 +150,9 @@
 						"breadcrumb.svelte",
 						"index.ts"
 					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"@lucide/svelte@^0.513.0"
-					],
+					"devDependencies": ["@lucide/svelte@^0.513.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -187,17 +165,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"button.svelte",
-						"index.ts"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["button.svelte", "index.ts"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"tailwind-variants@^1.0.0"
-					],
+					"devDependencies": ["tailwind-variants@^1.0.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -210,18 +181,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"checkbox.svelte",
-						"index.ts"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["checkbox.svelte", "index.ts"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"bits-ui@^2.5.0",
-						"@lucide/svelte@^0.513.0"
-					],
+					"devDependencies": ["bits-ui@^2.5.0", "@lucide/svelte@^0.513.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -234,18 +197,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"data-table.svelte.ts",
-						"flex-render.svelte",
-						"index.ts",
-						"render-helpers.ts"
-					],
+					"files": ["data-table.svelte.ts", "flex-render.svelte", "index.ts", "render-helpers.ts"],
 					"localDependencies": [],
 					"dependencies": [],
-					"devDependencies": [
-						"@tanstack/table-core@^8.21.3",
-						"svelte@^5.0.0"
-					],
+					"devDependencies": ["@tanstack/table-core@^8.21.3", "svelte@^5.0.0"],
 					"_imports_": {}
 				},
 				{
@@ -267,14 +222,9 @@
 						"dialog-trigger.svelte",
 						"index.ts"
 					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"bits-ui@^2.5.0",
-						"@lucide/svelte@^0.513.0"
-					],
+					"devDependencies": ["bits-ui@^2.5.0", "@lucide/svelte@^0.513.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -303,14 +253,9 @@
 						"dropdown-menu-trigger.svelte",
 						"index.ts"
 					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"bits-ui@^2.5.0",
-						"@lucide/svelte@^0.513.0"
-					],
+					"devDependencies": ["bits-ui@^2.5.0", "@lucide/svelte@^0.513.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -323,18 +268,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"file-drop-zone.svelte",
-						"index.ts"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["file-drop-zone.svelte", "index.ts"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"@lucide/svelte@^0.513.0",
-						"bits-ui@^2.5.0"
-					],
+					"devDependencies": ["@lucide/svelte@^0.513.0", "bits-ui@^2.5.0"],
 					"_imports_": {
 						"$lib/utils/utils": "{{utils/utils}}"
 					}
@@ -347,13 +284,8 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"index.ts",
-						"input.svelte"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["index.ts", "input.svelte"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
 					"devDependencies": [],
 					"_imports_": {
@@ -368,18 +300,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"index.ts",
-						"popover-content.svelte",
-						"popover-trigger.svelte"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["index.ts", "popover-content.svelte", "popover-trigger.svelte"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"bits-ui@^2.5.0"
-					],
+					"devDependencies": ["bits-ui@^2.5.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -392,18 +316,10 @@
 					"docs": false,
 					"subdirectory": true,
 					"list": false,
-					"files": [
-						"index.ts",
-						"scroll-area-scrollbar.svelte",
-						"scroll-area.svelte"
-					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"files": ["index.ts", "scroll-area-scrollbar.svelte", "scroll-area.svelte"],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
-					"devDependencies": [
-						"bits-ui@^2.5.0"
-					],
+					"devDependencies": ["bits-ui@^2.5.0"],
 					"_imports_": {
 						"$lib/utils/utils.js": "{{utils/utils}}.js"
 					}
@@ -427,9 +343,7 @@
 						"table-row.svelte",
 						"table.svelte"
 					],
-					"localDependencies": [
-						"utils/utils"
-					],
+					"localDependencies": ["utils/utils"],
 					"dependencies": [],
 					"devDependencies": [],
 					"_imports_": {

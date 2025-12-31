@@ -1,12 +1,9 @@
 {
-    "servers": {
-        "jsrepo": {
-            "type": "stdio",
-            "command": "bunx",
-            "args": [
-                "jsrepo",
-                "mcp"
-            ]
-        }
-    }
+	"servers": {
+		"jsrepo": {
+			"type": "stdio",
+			"command": "bunx",
+			"args": ["jsrepo", "mcp"]
+		}
+	}
 }

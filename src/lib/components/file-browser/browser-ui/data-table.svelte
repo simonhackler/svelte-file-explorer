@@ -1,4 +1,4 @@
-<script lang="ts" generics="TValue">
+<script lang="ts">
 	import { renderComponent, renderSnippet } from '$lib/components/ui/data-table';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 
@@ -13,14 +13,14 @@
 		getFilteredRowModel,
 		type SortingState,
 		type VisibilityState,
-        type RowSelectionState
+		type RowSelectionState
 	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { cn } from '$lib/utils/utils';
 	import { isFolder, type ExplorerNode } from '../browser-utils/types.svelte';
 	import FileBrowserGridItem from './file-browser-grid-item.svelte';
-	import type { Snippet } from 'svelte';
+	import type { Snippet, Component } from 'svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -33,7 +33,7 @@
 		downloadNodes: (nodes: ExplorerNode[]) => Promise<Error | null>;
 	}
 
-	type DataTableProps<ExplorerNode, TValue> = {
+	type DataTableProps = {
 		data: ExplorerNode[];
 		display: 'list' | 'grid';
 		actionList: Snippet<[ExplorerNode]>;
@@ -51,11 +51,16 @@
 		actionList,
 		showActions = true,
 		fileFunctions
-	}: DataTableProps<ExplorerNode, TValue> = $props();
+	}: DataTableProps = $props();
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
-	let columnVisibility = $state<VisibilityState>({});
+	let userColumnVisibility = $state<VisibilityState>({});
+	let columnVisibility = $derived<VisibilityState>({
+		...userColumnVisibility,
+		actions: showActions,
+		select: showActions
+	});
 	let rowSelection = $state<RowSelectionState>({});
 
 	export const columns: ColumnDef<ExplorerNode>[] = [
@@ -98,7 +103,10 @@
 		},
 		{
 			accessorFn: (row) => {
-				return displaySize(row?.fileData?.size || 0);
+				if (isFolder(row)) {
+					return '—';
+				}
+				return displaySize(row.fileData?.size || 0);
 			},
 			header: 'Size'
 		}
@@ -128,9 +136,9 @@
 		},
 		onColumnVisibilityChange: (updater) => {
 			if (typeof updater === 'function') {
-				columnVisibility = updater(columnVisibility);
+				userColumnVisibility = updater(userColumnVisibility);
 			} else {
-				columnVisibility = updater;
+				userColumnVisibility = updater;
 			}
 		},
 		onRowSelectionChange: (updater) => {
@@ -156,9 +164,6 @@
 		}
 	});
 
-	table.getColumn('actions')?.toggleVisibility(showActions);
-	table.getColumn('select')?.toggleVisibility(showActions);
-
 	function blockClick(e: MouseEvent) {
 		e.stopPropagation();
 	}
@@ -172,7 +177,7 @@
 
 	async function executeFileFunction(
 		nodes: ExplorerNode[],
-		fileFunction: (nodes: ExplorerNode[]) => any
+		fileFunction: (nodes: ExplorerNode[]) => Promise<Error | null> | void
 	) {
 		fileFunction(nodes);
 		table.resetRowSelection();
@@ -196,7 +201,11 @@
 		</div>
 		{#if table.getFilteredSelectedRowModel().rows.length > 0 && fileFunctions}
 			<div class="flex items-center gap-2">
-				{#snippet functionButton(fileFunction, text, Icon)}
+				{#snippet functionButton(
+					fileFunction: (nodes: ExplorerNode[]) => void,
+					text: string,
+					Icon: Component
+				)}
 					<Button
 						onclick={() =>
 							executeFileFunction(

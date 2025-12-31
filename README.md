@@ -6,12 +6,16 @@ A shadcn-svelte file explorer. It handles common file operations and allows you 
 sync your changes to a storage adapter of your choice.
 
 It is fully stylable with shadcn-svelte.
+
 ## Demo
+
 The demo uses local storage only so no files will be sent anywhere.
+
 - Site: https://file-browser-demo.vercel.app/
 - Repo: https://github.com/simonhackler/file-browser-demo
 
 ## Adapters
+
 - [x] supabase adapter
 - [x] local storage adapter
 - [ ] s3 adapter
@@ -19,29 +23,30 @@ The demo uses local storage only so no files will be sent anywhere.
 - [ ] ?
 
 ## Usage
+
 ```svelte
 <script>
-  import CustomAdapter from 'your-adapter-path';
-  import AdapterFileBrowser from 'your-component-path';
+	import CustomAdapter from 'your-adapter-path';
+	import AdapterFileBrowser from 'your-component-path';
 
-  const homePath = '/home';
-  const adapter = new CustomAdapter(homePath);
+	const homePath = '/home';
+	const adapter = new CustomAdapter(homePath);
 </script>
 
-<AdapterFileBrowser
-  {adapter}
-  pathPrefix={homePath + '/'}
-/>
+<AdapterFileBrowser {adapter} pathPrefix={homePath + '/'} />
 ```
 
 ## Install
 
 1. Install shadcn-svelte https://shadcn-svelte.com/docs/installation
 2. initialize jsrepo
+
 ```bash
 jsrepo init https://github.com/simonhackler/svelte-file-explorer
 ```
+
 3. Configure jsrepo.json
+
 ```json
     //...
 	"paths": {
@@ -53,13 +58,14 @@ jsrepo init https://github.com/simonhackler/svelte-file-explorer
 ```
 
 4. Install components
+
 ```bash
 jsrepo add
 ```
 
 ## Acknowledgements
-This repo uses components from
 
+This repo uses components from
 
 https://github.com/ieedan/shadcn-svelte-extras
 

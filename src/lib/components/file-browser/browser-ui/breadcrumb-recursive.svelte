@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import type { FileLeaf, ExplorerNode, Folder } from '../browser-utils/types.svelte';
+	import type { Folder } from '../browser-utils/types.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import BreadcrumbRecursive from '$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte';
 
 	interface Props {
 		folder: Folder;
 		isLast?: boolean;
-        onBreadCrumbClick: (folder: Folder) => void;
+		onBreadCrumbClick: (folder: Folder) => void;
 	}
 
 	let { folder, isLast = true, onBreadCrumbClick }: Props = $props();
-
-
 </script>
 
 {#if folder.parent}

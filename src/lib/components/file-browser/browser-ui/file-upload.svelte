@@ -62,6 +62,7 @@
 	async function uploadFiles() {
 		const errors = await Promise.all(files.map((f) => uploadToAdapter(f.file, f.overwrite)));
 		if (errors.some((e) => e !== null)) {
+			console.error('Upload errors:', errors);
 		} else {
 			open = false;
 			files = [];

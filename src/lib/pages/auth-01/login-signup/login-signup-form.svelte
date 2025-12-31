@@ -5,9 +5,10 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { loginSchema, type LoginSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import PasswordInput from '$lib/components/ui/password-input/password-input.svelte';
 	import { page } from '$app/stores';
+	import { resolve } from '$app/paths';
 
 	let {
 		data,
@@ -15,11 +16,13 @@
 	}: { data: { loginForm: SuperValidated<Infer<LoginSchema>> }; mode: 'login' | 'signup' } =
 		$props();
 
-	const form = superForm(data.loginForm, {
-		validators: zodClient(loginSchema)
-	});
+	const form = $derived(
+		superForm(data.loginForm, {
+			validators: zod4Client(loginSchema)
+		})
+	);
 
-	const { form: formData, enhance, message } = form;
+	const { form: formData, enhance, message } = $derived(form);
 	const action = $derived(mode === 'login' ? '?/login' : '?/signup');
 </script>
 
@@ -54,7 +57,10 @@
 								<div class="flex items-center">
 									<Form.Label class="text-sm">Password</Form.Label>
 									{#if mode === 'login'}
-										<a href="/01/reset-password" class="ml-auto inline-block text-sm underline">
+										<a
+											href={resolve('/01/reset-password')}
+											class="ml-auto inline-block text-sm underline"
+										>
 											Forgot your password?
 										</a>
 									{/if}
@@ -66,7 +72,9 @@
 					</Form.Field>
 				</div>
 				{#if $message}
-					<p class:success={$page.status == 200} class:error={$page.status >= 400}>{$message}</p>
+					<p class:text-green-600={$page.status == 200} class:text-red-600={$page.status >= 400}>
+						{$message}
+					</p>
 				{/if}
 				<Button type="submit" class="w-full">Login</Button>
 				<Button variant="outline" class="w-full">
@@ -82,23 +90,12 @@
 			<div class="mt-4 text-center text-sm">
 				{#if mode === 'login'}
 					Don't have an account?
-					<a href="/01/signup" class="underline"> Sign up </a>
+					<a href={resolve('/01/signup')} class="underline"> Sign up </a>
 				{:else}
 					Already have an account?
-					<a href="/01/login" class="underline"> Login </a>
+					<a href={resolve('/01/login')} class="underline"> Login </a>
 				{/if}
 			</div>
 		</form>
 	</Card.Content>
 </Card.Root>
-
-<style>
-	@reference '/src/app.css';
-
-	.success {
-		color: green;
-	}
-	.error {
-		@apply text-red-600;
-	}
-</style>
