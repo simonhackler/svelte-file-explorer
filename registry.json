@@ -1,0 +1,1967 @@
+{
+	"name": "@simonhackler/svelte-shadcn-file-browser",
+	"version": "0.0.1",
+	"type": "repository",
+	"items": [
+		{
+			"name": "utils",
+			"type": "utils",
+			"add": "when-needed",
+			"registryDependencies": [],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "clsx",
+					"version": "^2.1.1"
+				},
+				{
+					"ecosystem": "js",
+					"name": "tailwind-merge",
+					"version": "^3.4.0"
+				}
+			],
+			"files": [
+				{
+					"type": "utils",
+					"role": "file",
+					"path": "utils.ts",
+					"relativePath": "src/lib/utils/utils.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "adapters",
+			"type": "file-browser",
+			"add": "when-added",
+			"registryDependencies": [
+				"browser-utils"
+			],
+			"dependencies": [
+				{
+					"ecosystem": "js",
+					"name": "@supabase/supabase-js",
+					"version": "^2.89.0"
+				}
+			],
+			"devDependencies": [],
+			"files": [
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "adapters/adapter.ts",
+					"relativePath": "src/lib/components/file-browser/adapters/adapter.ts",
+					"_imports_": [
+						{
+							"import": "../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "adapters/local-storage/local-storage-adapter.ts",
+					"relativePath": "src/lib/components/file-browser/adapters/local-storage/local-storage-adapter.ts",
+					"_imports_": [
+						{
+							"import": "../../browser-utils/file-tree.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/file-tree.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "adapters/opfs/opdfs-adapter.ts",
+					"relativePath": "src/lib/components/file-browser/adapters/opfs/opdfs-adapter.ts",
+					"_imports_": [
+						{
+							"import": "../../browser-utils/file-tree.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/file-tree.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "adapters/supabase/helper.ts",
+					"relativePath": "src/lib/components/file-browser/adapters/supabase/helper.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "adapters/supabase/supabase-adapter.ts",
+					"relativePath": "src/lib/components/file-browser/adapters/supabase/supabase-adapter.ts",
+					"_imports_": [
+						{
+							"import": "../../browser-utils/file-tree.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/file-tree.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "browser-ui",
+			"type": "file-browser",
+			"add": "when-added",
+			"registryDependencies": [
+				"browser-utils",
+				"adapters",
+				"button",
+				"breadcrumb",
+				"data-table",
+				"scroll-area",
+				"file-drop-zone",
+				"table",
+				"utils",
+				"input",
+				"checkbox",
+				"dropdown-menu",
+				"popover",
+				"dialog"
+			],
+			"dependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte-sonner",
+					"version": "^1.0.7"
+				}
+			],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@tanstack/table-core",
+					"version": "^8.21.3"
+				}
+			],
+			"files": [
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/adapter-file-browser.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/adapter-file-browser.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/file-browser/browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-ui/file-browser.svelte",
+							"item": "browser-ui",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-ui/file-browser.svelte"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/adapters/adapter",
+							"item": "adapters",
+							"file": {
+								"type": "file-browser",
+								"path": "adapters/adapter.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/breadcrumb-recursive.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/breadcrumb/index.js",
+							"item": "breadcrumb",
+							"file": {
+								"type": "ui",
+								"path": "breadcrumb/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte",
+							"item": "browser-ui",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-ui/breadcrumb-recursive.svelte"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/data-table-name-button.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/data-table-name-button.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/button/index.js",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/data-table.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/data-table.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/data-table",
+							"item": "data-table",
+							"file": {
+								"type": "ui",
+								"path": "data-table/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/scroll-area/index.js",
+							"item": "scroll-area",
+							"file": {
+								"type": "ui",
+								"path": "scroll-area/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/file-drop-zone",
+							"item": "file-drop-zone",
+							"file": {
+								"type": "ui",
+								"path": "file-drop-zone/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/data-table/index.js",
+							"item": "data-table",
+							"file": {
+								"type": "ui",
+								"path": "data-table/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/table/index.js",
+							"item": "table",
+							"file": {
+								"type": "ui",
+								"path": "table/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/utils/utils",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/input/index.js",
+							"item": "input",
+							"file": {
+								"type": "ui",
+								"path": "input/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/checkbox",
+							"item": "checkbox",
+							"file": {
+								"type": "ui",
+								"path": "checkbox/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/button/button.svelte",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/button.svelte"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/file-browser-actions.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/file-browser-actions.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/dropdown-menu/index.js",
+							"item": "dropdown-menu",
+							"file": {
+								"type": "ui",
+								"path": "dropdown-menu/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/file-browser-grid-item.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/file-browser-grid-item.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/file-drop-zone",
+							"item": "file-drop-zone",
+							"file": {
+								"type": "ui",
+								"path": "file-drop-zone/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/file-browser-item-icon.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/file-browser-item-icon.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/file-browser/browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/file-browser.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/file-browser.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/popover/index.js",
+							"item": "popover",
+							"file": {
+								"type": "ui",
+								"path": "popover/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/breadcrumb/index.js",
+							"item": "breadcrumb",
+							"file": {
+								"type": "ui",
+								"path": "breadcrumb/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte",
+							"item": "browser-ui",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-ui/breadcrumb-recursive.svelte"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/utils/utils",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/input",
+							"item": "input",
+							"file": {
+								"type": "ui",
+								"path": "input/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../browser-utils/explorer-node-functions",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/explorer-node-functions.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/file-upload.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/file-upload.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/dialog/index.js",
+							"item": "dialog",
+							"file": {
+								"type": "ui",
+								"path": "dialog/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/file-drop-zone",
+							"item": "file-drop-zone",
+							"file": {
+								"type": "ui",
+								"path": "file-drop-zone/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/input",
+							"item": "input",
+							"file": {
+								"type": "ui",
+								"path": "input/index.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-ui/move-copy-dialog.svelte",
+					"relativePath": "src/lib/components/file-browser/browser-ui/move-copy-dialog.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/components/ui/dialog/index.js",
+							"item": "dialog",
+							"file": {
+								"type": "ui",
+								"path": "dialog/index.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "../browser-utils/types.svelte",
+							"item": "browser-utils",
+							"file": {
+								"type": "file-browser",
+								"path": "browser-utils/types.svelte.ts"
+							},
+							"meta": {}
+						},
+						{
+							"import": "$lib/components/ui/button",
+							"item": "button",
+							"file": {
+								"type": "ui",
+								"path": "button/index.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "browser-utils",
+			"type": "file-browser",
+			"add": "when-added",
+			"registryDependencies": [],
+			"dependencies": [
+				{
+					"ecosystem": "js",
+					"name": "client-zip",
+					"version": "^2.5.0"
+				}
+			],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-utils/explorer-node-functions.ts",
+					"relativePath": "src/lib/components/file-browser/browser-utils/explorer-node-functions.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-utils/file-tree.svelte.ts",
+					"relativePath": "src/lib/components/file-browser/browser-utils/file-tree.svelte.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "file-browser",
+					"role": "file",
+					"path": "browser-utils/types.svelte.ts",
+					"relativePath": "src/lib/components/file-browser/browser-utils/types.svelte.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "breadcrumb",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				},
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-ellipsis.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-ellipsis.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-item.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-item.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-link.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-link.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-list.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-list.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-page.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-page.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb-separator.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb-separator.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/breadcrumb.svelte",
+					"relativePath": "src/lib/components/ui/breadcrumb/breadcrumb.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "breadcrumb/index.ts",
+					"relativePath": "src/lib/components/ui/breadcrumb/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "button",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				},
+				{
+					"ecosystem": "js",
+					"name": "tailwind-variants",
+					"version": "^3.2.2"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "button/button.svelte",
+					"relativePath": "src/lib/components/ui/button/button.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "button/index.ts",
+					"relativePath": "src/lib/components/ui/button/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "checkbox",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "checkbox/checkbox.svelte",
+					"relativePath": "src/lib/components/ui/checkbox/checkbox.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "checkbox/index.ts",
+					"relativePath": "src/lib/components/ui/checkbox/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "data-table",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "@tanstack/table-core",
+					"version": "^8.21.3"
+				},
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "data-table/data-table.svelte.ts",
+					"relativePath": "src/lib/components/ui/data-table/data-table.svelte.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "data-table/flex-render.svelte",
+					"relativePath": "src/lib/components/ui/data-table/flex-render.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "data-table/index.ts",
+					"relativePath": "src/lib/components/ui/data-table/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "data-table/render-helpers.ts",
+					"relativePath": "src/lib/components/ui/data-table/render-helpers.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "dialog",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				},
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-close.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-close.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-content.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-content.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-description.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-description.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-footer.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-footer.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-header.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-header.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-overlay.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-overlay.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-title.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-title.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/dialog-trigger.svelte",
+					"relativePath": "src/lib/components/ui/dialog/dialog-trigger.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dialog/index.ts",
+					"relativePath": "src/lib/components/ui/dialog/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "dropdown-menu",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				},
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-checkbox-item.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-checkbox-item.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-content.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-content.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-group-heading.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-group-heading.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-group.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-group.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-item.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-item.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-label.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-label.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-radio-group.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-radio-group.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-radio-item.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-radio-item.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-separator.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-separator.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-shortcut.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-shortcut.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-sub-content.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-sub-content.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-sub-trigger.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-sub-trigger.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/dropdown-menu-trigger.svelte",
+					"relativePath": "src/lib/components/ui/dropdown-menu/dropdown-menu-trigger.svelte",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "dropdown-menu/index.ts",
+					"relativePath": "src/lib/components/ui/dropdown-menu/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "file-drop-zone",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				},
+				{
+					"ecosystem": "js",
+					"name": "@lucide/svelte",
+					"version": "^0.562.0"
+				},
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "file-drop-zone/file-drop-zone.svelte",
+					"relativePath": "src/lib/components/ui/file-drop-zone/file-drop-zone.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "file-drop-zone/index.ts",
+					"relativePath": "src/lib/components/ui/file-drop-zone/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "input",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "input/index.ts",
+					"relativePath": "src/lib/components/ui/input/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "input/input.svelte",
+					"relativePath": "src/lib/components/ui/input/input.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "popover",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "popover/index.ts",
+					"relativePath": "src/lib/components/ui/popover/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "popover/popover-content.svelte",
+					"relativePath": "src/lib/components/ui/popover/popover-content.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "popover/popover-trigger.svelte",
+					"relativePath": "src/lib/components/ui/popover/popover-trigger.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "scroll-area",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "bits-ui",
+					"version": "^2.14.4"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "scroll-area/index.ts",
+					"relativePath": "src/lib/components/ui/scroll-area/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "scroll-area/scroll-area-scrollbar.svelte",
+					"relativePath": "src/lib/components/ui/scroll-area/scroll-area-scrollbar.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "scroll-area/scroll-area.svelte",
+					"relativePath": "src/lib/components/ui/scroll-area/scroll-area.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
+		{
+			"name": "table",
+			"type": "ui",
+			"add": "when-needed",
+			"registryDependencies": [
+				"utils"
+			],
+			"dependencies": [],
+			"devDependencies": [
+				{
+					"ecosystem": "js",
+					"name": "svelte",
+					"version": "^5.46.1"
+				}
+			],
+			"files": [
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/index.ts",
+					"relativePath": "src/lib/components/ui/table/index.ts",
+					"_imports_": [],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-body.svelte",
+					"relativePath": "src/lib/components/ui/table/table-body.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-caption.svelte",
+					"relativePath": "src/lib/components/ui/table/table-caption.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-cell.svelte",
+					"relativePath": "src/lib/components/ui/table/table-cell.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-footer.svelte",
+					"relativePath": "src/lib/components/ui/table/table-footer.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-head.svelte",
+					"relativePath": "src/lib/components/ui/table/table-head.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-header.svelte",
+					"relativePath": "src/lib/components/ui/table/table-header.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table-row.svelte",
+					"relativePath": "src/lib/components/ui/table/table-row.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				},
+				{
+					"type": "ui",
+					"role": "file",
+					"path": "table/table.svelte",
+					"relativePath": "src/lib/components/ui/table/table.svelte",
+					"_imports_": [
+						{
+							"import": "$lib/utils/utils.js",
+							"item": "utils",
+							"file": {
+								"type": "utils",
+								"path": "utils.ts"
+							},
+							"meta": {}
+						}
+					],
+					"registryDependencies": [],
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		}
+	]
+}

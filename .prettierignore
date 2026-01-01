@@ -6,4 +6,4 @@ bun.lock
 bun.lockb
 
 # Generated files
-jsrepo-manifest.json
+registry.json
