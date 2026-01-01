@@ -26,6 +26,7 @@
 		"@eslint/compat": "^1.4.1",
 		"@eslint/js": "^9.39.2",
 		"@internationalized/date": "^3.10.1",
+		"@j178/prek": "^0.2.25",
 		"@jsrepo/transform-prettier": "^0.0.10",
 		"@lucide/svelte": "^0.562.0",
 		"@playwright/test": "^1.57.0",
