@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "branded-types": {
+      "source": "wellcrafted-dev/wellcrafted",
+      "sourceType": "github",
+      "skillPath": "skills/branded-types/SKILL.md",
+      "computedHash": "ee90e5d29ed647eb14ec2eaddbb5e5bb51529878f7e2e8a45ff73bc278428ec5"
+    },
+    "define-errors": {
+      "source": "wellcrafted-dev/wellcrafted",
+      "sourceType": "github",
+      "skillPath": "skills/define-errors/SKILL.md",
+      "computedHash": "3af4dd8675b34e8aa6cbddef6a11c2c0697a47c7292e616eeff780ecdfcb8b04"
+    },
+    "patterns": {
+      "source": "wellcrafted-dev/wellcrafted",
+      "sourceType": "github",
+      "skillPath": "skills/patterns/SKILL.md",
+      "computedHash": "e4c45e6400e740ce97b5257164f084dbbd722a0848b7b00e754fa88e8da8e899"
+    },
+    "result-types": {
+      "source": "wellcrafted-dev/wellcrafted",
+      "sourceType": "github",
+      "skillPath": "skills/result-types/SKILL.md",
+      "computedHash": "f49e8b1ef6111c264ca34b3ac8ca66648c833d3b99443680e27e6ecd20c4ecdb"
+    }
+  }
+}

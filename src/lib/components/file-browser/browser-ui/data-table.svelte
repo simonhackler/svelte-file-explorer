@@ -25,12 +25,13 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Folders, Download, FolderOutput, Trash2 } from '@lucide/svelte';
+	import type { FsError } from '../adapters/adapter';
 
 	interface FileFunctions {
-		deleteNodes: (nodes: ExplorerNode[]) => Promise<Error | null>;
+		deleteNodes: (nodes: ExplorerNode[]) => Promise<FsError | null>;
 		copyNodes: (nodes: ExplorerNode[]) => void;
 		moveNodes: (nodes: ExplorerNode[]) => void;
-		downloadNodes: (nodes: ExplorerNode[]) => Promise<Error | null>;
+		downloadNodes: (nodes: ExplorerNode[]) => Promise<FsError | null>;
 	}
 
 	type DataTableProps = {
@@ -177,9 +178,9 @@
 
 	async function executeFileFunction(
 		nodes: ExplorerNode[],
-		fileFunction: (nodes: ExplorerNode[]) => Promise<Error | null> | void
+		fileFunction: (nodes: ExplorerNode[]) => Promise<FsError | null> | void
 	) {
-		fileFunction(nodes);
+		await fileFunction(nodes);
 		table.resetRowSelection();
 	}
 </script>

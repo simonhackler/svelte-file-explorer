@@ -12,9 +12,10 @@
 	import { onDestroy } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { Input } from '$lib/components/ui/input';
+	import type { FsError } from '$lib/components/file-browser/adapters/adapter';
 
 	interface Props {
-		uploadToAdapter: (file: File, overwrite?: boolean) => Promise<Error | null>;
+		uploadToAdapter: (file: File, overwrite?: boolean) => Promise<FsError | null>;
 		filesInFolder: string[];
 	}
 

@@ -79,6 +79,7 @@
 		"idb-keyval": "^6.2.2",
 		"mode-watcher": "^1.1.0",
 		"supabase": "^2.70.5",
-		"svelte-sonner": "^1.0.7"
+		"svelte-sonner": "^1.0.7",
+		"wellcrafted": "^0.35.0"
 	}
 }

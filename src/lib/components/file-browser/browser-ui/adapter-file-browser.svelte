@@ -4,6 +4,8 @@
 	import { Folder, isFolder } from '$lib/components/file-browser/browser-utils/types.svelte';
 	import FileBrowser from '$lib/components/file-browser/browser-ui/file-browser.svelte';
 	import type { Adapter } from '$lib/components/file-browser/adapters/adapter';
+	import { buildFileTree, type InputPath } from '../browser-utils/file-tree.svelte';
+	import { joinFsPath } from '../adapters/adapter';
 
 	let {
 		adapter,
@@ -29,25 +31,69 @@
 	}
 
 	onMount(async () => {
-		const { result, error } = await adapter.getRootFolder();
-		if (error) {
-			console.error(error);
-		} else if (result) {
-			tree = result;
+		const root = await loadRootFolder();
+		if (root) {
+			tree = root;
 		}
 	});
 
+	async function loadRootFolder(): Promise<Folder | null> {
+		const filePathList: InputPath[] = [];
+
+		async function walk(path?: string): Promise<boolean> {
+			const entries = await adapter.list(path);
+			if (entries.error) {
+				console.error(entries.error);
+				return false;
+			}
+
+			for (const entry of entries.data) {
+				const nextPath = joinFsPath(path ?? '', entry.name);
+
+				if (entry.kind === 'directory') {
+					const ok = await walk(nextPath);
+					if (!ok) return false;
+				} else {
+					const file = await adapter.read(nextPath);
+					if (file.error) {
+						console.error(file.error);
+						return false;
+					}
+
+					filePathList.push({
+						pathTokens: ['home', ...nextPath.split('/')],
+						fileData: {
+							size: file.data.size,
+							mimetype: file.data.type || 'application/octet-stream',
+							updatedAt: new Date(file.data.lastModified),
+							blob: file.data,
+							url: file.data.type.startsWith('image/')
+								? Promise.resolve(URL.createObjectURL(file.data))
+								: undefined
+						}
+					});
+				}
+			}
+
+			return true;
+		}
+
+		const ok = await walk();
+		if (!ok) {
+			return null;
+		}
+
+		return buildFileTree(filePathList);
+	}
+
 	async function downloadFile(path: string) {
-		const res = await adapter.download([path]);
-		const { result, error } = res[0];
-		if (error) {
-			console.error(error);
+		const file = await adapter.read(path);
+		if (file.error) {
+			console.error(file.error);
 			return '';
 		}
-		if (result) {
-			return URL.createObjectURL(result.data);
-		}
-		return '';
+
+		return URL.createObjectURL(file.data);
 	}
 
 	$effect(() => {
@@ -58,7 +104,7 @@
 				child.fileData.mimetype.startsWith('image/') &&
 				!child.fileData.url
 			) {
-				const fullPath = pathPrefix + getPathArray(child).slice(1).join('/');
+				const fullPath = getPathArray(child).slice(1).join('/');
 				child.fileData.url = downloadFile(fullPath);
 			}
 		}

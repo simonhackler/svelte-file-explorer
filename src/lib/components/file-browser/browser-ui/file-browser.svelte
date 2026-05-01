@@ -4,10 +4,14 @@
 	import { Button } from '$lib/components/ui/button';
 	import {
 		type ExplorerNode,
-		type FileFunctions,
 		Folder,
 		isFolder
 	} from '$lib/components/file-browser/browser-utils/types.svelte';
+	import {
+		joinFsPath,
+		type FileFunctions,
+		type FsError
+	} from '$lib/components/file-browser/adapters/adapter';
 
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import BreadcrumbRecursive from '$lib/components/file-browser/browser-ui/breadcrumb-recursive.svelte';
@@ -56,7 +60,7 @@
 	const regex = /^(?!\s)(?!.*\s$)[A-Za-z0-9 ]+$/;
 	let showCreateInput = $state(false);
 
-	function createFolder() {
+	async function createFolder() {
 		const newFolderName = createFolderInput!.value;
 		if (newFolderName === '') {
 			return;
@@ -65,6 +69,17 @@
 		if (!valid) {
 			return;
 		}
+
+		const folderPath = joinFsPath(
+			ExplorerNodeFunctions.getPath(currentFolder).slice(1).join('/'),
+			newFolderName
+		);
+		const created = await fileFunctions.ensureDir(folderPath);
+		if (created.error) {
+			console.error(created.error);
+			return;
+		}
+
 		currentFolder.children = [
 			...currentFolder.children,
 			new Folder(newFolderName, currentFolder, [])
@@ -82,12 +97,12 @@
 
 	const fileFunctionsNode = $derived({
 		deleteNodes: explorerFunctions.deleteNodes.bind(explorerFunctions),
-		downloadNodes: async (nodes: ExplorerNode[]): Promise<Error | null> => {
+		downloadNodes: async (nodes: ExplorerNode[]): Promise<FsError | null> => {
 			try {
-				await explorerFunctions.downloadNodes(nodes);
-				return null;
+				return await explorerFunctions.downloadNodes(nodes);
 			} catch (error) {
-				return error instanceof Error ? error : new Error(String(error));
+				console.error(error);
+				return null;
 			}
 		},
 		moveNodes: setActionMove,

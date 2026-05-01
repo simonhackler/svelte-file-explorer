@@ -18,7 +18,7 @@ export async function getEmailLinkFromSupabaseAdmin(page: Page, linkText: string
 		.contentFrame()
 		.getByRole('link', { name: linkText })
 		.getAttribute('href');
-	return url!;
+	return url!.replace('http://localhost:5173', 'http://127.0.0.1:5173');
 }
 
 export async function performLogin(page: Page, email: string, password: string) {
